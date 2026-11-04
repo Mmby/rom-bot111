@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <profile>
 	<options>
-		<!-- Try the bot with a new char mage                   -->
-		<!-- At the pioneer village. Use demo.xml waypoint file -->
+		<!-- Try the bot with a new char mage                   --><!-- 用一个新的法师角色试试机器人 -->
+		<!-- At the pioneer village. Use demo.xml waypoint file --><!-- 在先锋村。使用 demo.xml 路点文件 -->
 		<option name="HP_LOW"				value="85" />
 		<option name="MP_LOW_POTION"		value="50" />
 		<option name="HP_LOW_POTION"		value="50" />
-		<option name="USE_HP_POTION"		value="best" />			<!-- potion select strategy: best|minstack -->
-		<option name="USE_MANA_POTION"		value="best" />			<!-- potion select strategy: best|minstack -->
-		<option name="USE_PHIRIUS_POTION"	value="false" /> 		<!-- false | true if you want to use the Phirus Potions -->
+		<option name="USE_HP_POTION"		value="best" />			<!-- potion select strategy: best|minstack --><!-- 药水选择策略：best（最优）|minstack（最少堆叠） -->
+		<option name="USE_MANA_POTION"		value="best" />			<!-- potion select strategy: best|minstack --><!-- 药水选择策略：best（最优）|minstack（最少堆叠） -->
+		<option name="USE_PHIRIUS_POTION"	value="false" /> 		<!-- false | true if you want to use the Phirus Potions --><!-- false | true，是否使用菲鲁斯药水 -->
 		<option name="PHIRIUS_MP_LOW"		value="40" />
 		<option name="PHIRIUS_HP_LOW"		value="40" />
 
-		<!-- Rest if HP or Mana is below that level -->
+		<!-- Rest if HP or Mana is below that level --><!-- 当 HP 或 MP 低于此值时休息 -->
 		<option name="HP_REST" 				value="15" />
 		<option name="MP_REST" 				value="15" />
 
-		<!-- Shopping options, how many of what do you want to keep in your inventory -->
+		<!-- Shopping options, how many of what do you want to keep in your inventory --><!-- 购物选项，你想在背包中保留多少数量的各种物品 -->
 		<option name="HEALING_POTION" 		value="99" />
-		<option name="MANA_POTION" 			value="99" />			<!-- set to "0" if not required to buy -->
-		<option name="ARROW_QUIVER" 		value="0" /> 			<!-- set to "0" if not required to buy -->
-		<option name="THROWN_BAG" 			value="2" />			<!-- set to "0" if not required to buy -->
-		<option name="POISON" 				value="30" />			<!-- set to "0" if not required to buy -->
+		<option name="MANA_POTION" 			value="99" />			<!-- set to "0" if not required to buy --><!-- 设为 "0" 则不购买 -->
+		<option name="ARROW_QUIVER" 		value="0" /> 			<!-- set to "0" if not required to buy --><!-- 设为 "0" 则不购买 -->
+		<option name="THROWN_BAG" 			value="2" />			<!-- set to "0" if not required to buy --><!-- 设为 "0" 则不购买 -->
+		<option name="POISON" 				value="30" />			<!-- set to "0" if not required to buy --><!-- 设为 "0" 则不购买 -->
 
-		<!-- either false or arrow or thrown -->
-		<option name="RELOAD_AMMUNITION" 	value="false" />		<!-- false|arrow|thrown -->
+		<!-- either false or arrow or thrown --><!-- 可选 false 或 arrow 或 thrown -->
+		<option name="RELOAD_AMMUNITION" 	value="false" />		<!-- false|arrow|thrown --><!-- false（不装填）|arrow（箭矢）|thrown（投掷武器） -->
 
-		<!-- Combat options -->
-		<option name="COMBAT_TYPE"        	value="" />				<!-- leave empty or choose ranged/melee if not using class default -->
-		<option name="COMBAT_RANGED_PULL" 	value="true" /> 		<!-- only important for melees -->
-		<option name="COMBAT_DISTANCE"    	value="200" />			<!-- Distance at which it starts using skills -->
-		<option name="COMBAT_STOP_DISTANCE" value="200" />			<!-- Distance at which it stops moving towards the target -->
-		<option name="MAX_FIGHT_TIME"     	value="10" />			<!-- Max time without damage before break -->
+		<!-- Combat options --><!-- 战斗选项 -->
+		<option name="COMBAT_TYPE"        	value="" />				<!-- leave empty or choose ranged/melee if not using class default --><!-- 留空使用职业默认，或选择 ranged（远程）/melee（近战） -->
+		<option name="COMBAT_RANGED_PULL" 	value="true" /> 		<!-- only important for melees --><!-- 仅对近战职业重要 -->
+		<option name="COMBAT_DISTANCE"    	value="200" />			<!-- Distance at which it starts using skills --><!-- 开始使用技能的距离 -->
+		<option name="COMBAT_STOP_DISTANCE" value="200" />			<!-- Distance at which it stops moving towards the target --><!-- 停止向目标移动的距离 -->
+		<option name="MAX_FIGHT_TIME"     	value="10" />			<!-- Max time without damage before break --><!-- 无伤害输出的最长时间后脱离战斗 -->
 		<option name="DOT_PERCENT"        	value="90" />
 		<option name="ANTI_KS"            	value="true" />
 		<option name="MAX_TARGET_DIST"    	value="225" />
-		<option name="PRIORITY_CASTING"		value="false" />		<!-- If you want to cast attack skills by 'priority' or 'sequencially' -->
-		<option name="COUNT_AGGRO_ONLY"		value="false" />		<!-- If you want to count only aggro mobs within range of aoe skills  -->
-		<option name="AUTO_ELITE_FACTOR"    value="5" />			<!-- (value * your max HP) to designate a mob as "elite" -->
+		<option name="PRIORITY_CASTING"		value="false" />		<!-- If you want to cast attack skills by 'priority' or 'sequencially' --><!-- 是否按'优先级'或'顺序'施放攻击技能 -->
+		<option name="COUNT_AGGRO_ONLY"		value="false" />		<!-- If you want to count only aggro mobs within range of aoe skills  --><!-- 是否只计算 AOE 技能范围内的仇恨怪  -->
+		<option name="AUTO_ELITE_FACTOR"    value="5" />			<!-- (value * your max HP) to designate a mob as "elite" --><!-- （此值 × 你的最大 HP）用于将怪物标记为"精英" -->
 
-		<!-- Attack monsters 3 levels above or 10 below your level -->
+		<!-- Attack monsters 3 levels above or 10 below your level --><!-- 攻击高于你 3 级或低于你 10 级的怪物 -->
 		<option name="TARGET_LEVELDIF_ABOVE" value="3" />
 		<option name="TARGET_LEVELDIF_BELOW" value="10" />
 
-		<!-- Waypoint and movement settings -->
-		<option name="WAYPOINTS"			value="" />  			<!-- leave empty to show a list -->
+		<!-- Waypoint and movement settings --><!-- 路点和移动设置 -->
+		<option name="WAYPOINTS"			value="" />  			<!-- leave empty to show a list --><!-- 留空则显示列表供选择 -->
 		<option name="RETURNPATH"			value="" />
-		<option name="PATH_TYPE"			value="waypoints" />	<!-- waypoints | wander -->
+		<option name="PATH_TYPE"			value="waypoints" />	<!-- waypoints | wander --><!-- waypoints（沿路点行走）| wander（随机游荡） -->
 		<option name="WANDER_RADIUS"		value="500" />
 		<option name="WAYPOINT_DEVIATION"	value="0" />
 		<option name="QUICK_TURN" 			value="true" />
 
-		<!-- Loot settings -->
+		<!-- Loot settings --><!-- 拾取设置 -->
 		<option name="LOOT"               	value="true" />
-		<option name="LOOT_ALL"			  	value="false" />  		<!-- Loot all nearby dead mobs after combat -->
+		<option name="LOOT_ALL"			  	value="false" />  		<!-- Loot all nearby dead mobs after combat --><!-- 战斗后拾取附近所有死亡怪物 -->
 		<option name="LOOT_IN_COMBAT"     	value="true" />
 		<option name="LOOT_DISTANCE"      	value="100" />
-		<option name="LOOT_PAUSE_AFTER"   	value="0" />			<!-- probability in % for a short rest -->
-		<option name="LOOT_SIGILS"			value="" />				<!-- Loot sigils or not. If ommitted, will depend on "LOOT" value -->
-		<option name="SIGILS_IGNORE_LIST"	value="" />				<!-- List of any sigils you wish to ignore, in language of client -->
-		<option name="LOOT_JUMPING"			value="false" />		<!-- Jumps while looting to avoid crouching -->
-		<option name="LOOT_AGAIN"			value="2000" />			<!-- Second chance try if first loot failed. -->
-		<option name="LOOT_TIME"			value="1500" />			<!-- Amount of time allowed for looting. -->
+		<option name="LOOT_PAUSE_AFTER"   	value="0" />			<!-- probability in % for a short rest --><!-- 拾取后短暂休息的概率（%） -->
+		<option name="LOOT_SIGILS"			value="" />				<!-- Loot sigils or not. If ommitted, will depend on "LOOT" value --><!-- 是否拾取印记。如省略，则取决于 "LOOT" 的值 -->
+		<option name="SIGILS_IGNORE_LIST"	value="" />				<!-- List of any sigils you wish to ignore, in language of client --><!-- 要忽略的印记列表，使用客户端语言 -->
+		<option name="LOOT_JUMPING"			value="false" />		<!-- Jumps while looting to avoid crouching --><!-- 拾取时跳跃以避免蹲下 -->
+		<option name="LOOT_AGAIN"			value="2000" />			<!-- Second chance try if first loot failed. --><!-- 第一次拾取失败后的重试机会。 -->
+		<option name="LOOT_TIME"			value="1500" />			<!-- Amount of time allowed for looting. --><!-- 拾取允许的时间。 -->
 
-		<!-- Auto selling options when used with player:merchant -->
-		<option name="INV_AUTOSELL_ENABLE"	value="false" />		<!-- true | false -->
-		<option name="INV_AUTOSELL_FROMSLOT" value="1" /> 			<!-- 1 = bag 1 slot 1 -->
-		<option name="INV_AUTOSELL_TOSLOT"	value="60" /> 			<!-- 30 = last slot bag 1 -->
-		<option name="INV_AUTOSELL_QUALITY"	value="white,green" /> 	<!-- white,green,blue,purple  -->
+		<!-- Auto selling options when used with player:merchant --><!-- 使用 player:merchant 时的自动出售选项 -->
+		<option name="INV_AUTOSELL_ENABLE"	value="false" />		<!-- true | false --><!-- true（启用）| false（禁用） -->
+		<option name="INV_AUTOSELL_FROMSLOT" value="1" /> 			<!-- 1 = bag 1 slot 1 --><!-- 1 = 背包 1 的格 1 -->
+		<option name="INV_AUTOSELL_TOSLOT"	value="60" /> 			<!-- 30 = last slot bag 1 --><!-- 30 = 背包 1 的最后一格 -->
+		<option name="INV_AUTOSELL_QUALITY"	value="white,green" /> 	<!-- white,green,blue,purple  --><!-- white（白色）,green（绿色）,blue（蓝色）,purple（紫色）  -->
 
-		<!-- Harvest options -->
+		<!-- Harvest options --><!-- 采集选项 -->
 		<option name="HARVEST_DISTANCE"		value="120" />
-		<option name="HARVEST_WOOD"			value="true" /> 		<!-- Choose which types to harvest. -->
-		<option name="HARVEST_HERB"			value="true" /> 		<!-- "true" = harvest, "false" = do not harvest -->
+		<option name="HARVEST_WOOD"			value="true" /> 		<!-- Choose which types to harvest. --><!-- 选择要采集的类型。 -->
+		<option name="HARVEST_HERB"			value="true" /> 		<!-- "true" = harvest, "false" = do not harvest --><!-- "true" = 采集, "false" = 不采集 -->
 		<option name="HARVEST_ORE"			value="true" />
 
-		<!-- Eggpet options -->
-		<option name="EGGPET_ENABLE_CRAFT"	value="false" />		<!-- If using same slot for assist and craft, onlt 1 can be enabled. -->
+		<!-- Eggpet options --><!-- 蛋宠选项 -->
+		<option name="EGGPET_ENABLE_CRAFT"	value="false" />		<!-- If using same slot for assist and craft, onlt 1 can be enabled. --><!-- 如果辅助和制作使用同一格位，只能启用其中一个。 -->
 		<option name="EGGPET_CRAFT_SLOT"	value="1" />
 		<option name="EGGPET_ENABLE_ASSIST"	value="false" />
 		<option name="EGGPET_ASSIST_SLOT"	value="1" />
-		<option name="EGGPET_CRAFT_RATIO"	value="1:1:1" /> 		<!-- mining:woodworking:herbalism ratio to produce. -->
-		<option name="EGGPET_CRAFT_INDEXES"	value="" /> 	 		<!-- override auto craft index for mining,woodworking,herbalism eg. "2,,"-->
+		<option name="EGGPET_CRAFT_RATIO"	value="1:1:1" /> 		<!-- mining:woodworking:herbalism ratio to produce. --><!-- 采矿:木工:草药学的制作比例。 -->
+		<option name="EGGPET_CRAFT_INDEXES"	value="" /> 	 		<!-- override auto craft index for mining,woodworking,herbalism eg. "2,,"--><!-- 覆盖采矿、木工、草药学的自动制作索引，例如 "2,," -->
 
 
-		<!-- Log out and resurrect settings -->
-		<option name="LOGOUT_TIME" 			value="0" />			<!-- in minutes, 0 = timer disabled -->
+		<!-- Log out and resurrect settings --><!-- 登出和复活设置 -->
+		<option name="LOGOUT_TIME" 			value="0" />			<!-- in minutes, 0 = timer disabled --><!-- 单位为分钟，0 = 禁用计时器 -->
 		<option name="LOGOUT_SHUTDOWN"		value="false" />
 		<option name="LOGOUT_WHEN_STUCK"	value="true" />
 		<option name="CLOSE_WHEN_STUCK"		value="true" />
 		<option name="RES_AFTER_DEATH" 		value="true" />
-		<option name="MAX_DEATHS" 			value="10" /> 			<!-- Log out after this many deaths -->
+		<option name="MAX_DEATHS" 			value="10" /> 			<!-- Log out after this many deaths --><!-- 死亡达到此次数后登出 -->
 
-		<!-- Party Bot options  -->
+		<!-- Party Bot options  --><!-- 组队机器人选项  -->
 		<option name="PARTY"				value="false" />
-		<option name="PARTY_ICONS"			value="false" /> 		<!-- For party leader to place "I" Icon on the target Mob -->
-		<option name="PARTY_INSTANCE"		value="false" /> 		<!-- For party bot to enable the killing of mobs with high HP  -->
-		<option name="ICON_FIGHT"			value="false" />		<!-- For party bot to only attack mobs with "I" Icon -->
-		<option name="PARTY_FOLLOW_NAME"	value="" /> 			<!-- For party bot name of character to follow -->
-		<option name="HEAL_FIGHT"			value="false" />  		<!-- For party bot if you want healer to also fight -->
-		<option name="PARTYLEADER_WAIT"		value="false" /> 		<!-- to make a normal bot wait for party members -->
-		<option name="MONITOR_WHISPERS"		value="false" /> 		<!-- to monitor whispers instead of party chat -->
+		<option name="PARTY_ICONS"			value="false" /> 		<!-- For party leader to place "I" Icon on the target Mob --><!-- 供队长在目标怪上放置 "I" 标记 -->
+		<option name="PARTY_INSTANCE"		value="false" /> 		<!-- For party bot to enable the killing of mobs with high HP  --><!-- 供组队机器人启用击杀高 HP 怪物  -->
+		<option name="ICON_FIGHT"			value="false" />		<!-- For party bot to only attack mobs with "I" Icon --><!-- 供组队机器人仅攻击带有 "I" 标记的怪 -->
+		<option name="PARTY_FOLLOW_NAME"	value="" /> 			<!-- For party bot name of character to follow --><!-- 组队机器人要跟随的角色名称 -->
+		<option name="HEAL_FIGHT"			value="false" />  		<!-- For party bot if you want healer to also fight --><!-- 组队机器人中治疗者是否也参与战斗 -->
+		<option name="PARTYLEADER_WAIT"		value="false" /> 		<!-- to make a normal bot wait for party members --><!-- 让普通机器人等待队友 -->
+		<option name="MONITOR_WHISPERS"		value="false" /> 		<!-- to monitor whispers instead of party chat --><!-- 监控私语而非队伍聊天 -->
 
-		<!-- pvp -->
-		<option name="PVP"		value="" /> <!-- 'true' will auto attack players, 'false' will not fight back, no value will only fight if attacked. -->
+		<!-- pvp --><!-- PVP（玩家对战） -->
+		<option name="PVP"		value="" /> <!-- 'true' will auto attack players, 'false' will not fight back, no value will only fight if attacked. --><!-- 'true' 将自动攻击玩家，'false' 不会反击，不设值则仅在被攻击时才反击。 -->
 
-		<!-- For more options and documentation see the RoM Bot Wiki:  -->
-		<!-- http://www.solarstrike.net/wiki/index.php5?title=RoM_Bot  -->
+		<!-- For more options and documentation see the RoM Bot Wiki:  --><!-- 更多选项和文档请参见 RoM Bot Wiki：  -->
+		<!-- http://www.solarstrike.net/wiki/index.php5?title=RoM_Bot  --><!-- 更多选项和文档请参见 RoM Bot 维基： -->
 
 	</options>
 
 	<friends>
-		<!-- names of friends we help fighting or enemys we don't want to attack -->
-		<!-- for umlauts use \129 (ue),\132 (ae),\148 (oe) e.g. K\132fer         -->
+		<!-- names of friends we help fighting or enemys we don't want to attack --><!-- 我们帮助战斗的好友名称，或不想攻击的敌人名称 -->
+		<!-- for umlauts use \129 (ue),\132 (ae),\148 (oe) e.g. K\132fer         --><!-- 对于变音符使用 \129 (ü),\132 (ä),\148 (ö)，例如 K\132fer         -->
 		<friend name="MyOtherCharacter1" />
 		<friend name="MyOtherCharacter2" />
 		<friend name="Elite_Mob_Name1" />
@@ -120,24 +120,24 @@
 	</friends>
 
 	<mobs>
-		<!-- names of mobs we want to attack 				-->
-		<!-- if no names defined we will attack all mobs	-->
+		<!-- names of mobs we want to attack 				--><!-- 我们想要攻击的怪物名称				-->
+		<!-- if no names defined we will attack all mobs	--><!-- 如果未定义名称则攻击所有怪物	-->
 		<mob name="" />
 		<mob name="" />
 		<mob name="" />
 	</mobs>
 
 	<hotkeys>
-    	<!-- to communicate with the RoM API / define ingame dummy macro at place 1 -->
+    	<!-- to communicate with the RoM API / define ingame dummy macro at place 1 --><!-- 与 RoM API 通信 / 在位置 1 定义游戏内虚拟宏 -->
 		<hotkey name="MACRO"          key="VK_0" />
 	</hotkeys>
 
-	<!-- define your skills depending from your actual primary class -->
-	<!-- see the example for a priest/mage                           -->
-	<!-- delete skills you don't have or don't want to use.          -->
-	<!-- For more skills to use see /database/skills.xml             -->
-	<!-- demo skills for LvL 1 character for all classes             -->
-	<!-- to use a specific key instead of MACRO then use hotkey="VK_1" this example is for hotkey 1 -->
+	<!-- define your skills depending from your actual primary class --><!-- 根据你当前的主职业定义技能 -->
+	<!-- see the example for a priest/mage                           --><!-- 参见牧师/法师的示例                           -->
+	<!-- delete skills you don't have or don't want to use.          --><!-- 删除你没有或不想使用的技能。          -->
+	<!-- For more skills to use see /database/skills.xml             --><!-- 更多可用技能请参见 /database/skills.xml             -->
+	<!-- demo skills for LvL 1 character for all classes             --><!-- 所有职业 1 级角色的示例技能             -->
+	<!-- to use a specific key instead of MACRO then use hotkey="VK_1" this example is for hotkey 1 --><!-- 使用特定按键代替 MACRO，则使用 hotkey="VK_1"，此示例对应快捷键 1 -->
 	<skills_priest>
 		<skill name="PRIEST_GRACE_OF_LIFE" 		hotkey="MACRO" priority="120" rebuffcut="10" inbattle="false" />
 		<skill name="PRIEST_SOUL_SOURCE"     	hotkey="MACRO" priority="110" inbattle="true" hpper="15" />
@@ -145,14 +145,14 @@
 		<skill name="PRIEST_HOLY_AURA"       	hotkey="MACRO" priority="90" inbattle="true" hpper="24" />
 		<skill name="PRIEST_REGENERATE"      	hotkey="MACRO" priority="80"  hpper="80" />
 		<skill name="PRIEST_RISING_TIDE"     	hotkey="MACRO" priority="70" />
-		<!--skill name="PRIEST_WAVE_ARMOR"      	hotkey="MACRO" priority="40"  inbattle="true" /-->
-		<!--skill name="PRIEST_SOUL_BOND"     	hotkey="MACRO" priority="30" /> -->
-		<!--skill name="PRIEST_MAGIC_BARRIER" 	hotkey="MACRO" priority="20" rebuffcut="60" inbattle="false" /> -->
+		<!--skill name="PRIEST_WAVE_ARMOR"      	hotkey="MACRO" priority="40"  inbattle="true" /--><!-- 波动护甲 -->
+		<!--skill name="PRIEST_SOUL_BOND"     	hotkey="MACRO" priority="30" /> --><!-- 灵魂契约 -->
+		<!--skill name="PRIEST_MAGIC_BARRIER" 	hotkey="MACRO" priority="20" rebuffcut="60" inbattle="false" /> --><!-- 魔法屏障 -->
 	</skills_priest>
 
 	<skills_warrior>
 		<skill name="WARRIOR_SLASH"          	hotkey="MACRO" priority="90" />
-		<!--skill name="WARRIOR_TACTICAL_ATTACK"   hotkey="MACRO" priority="70" /-->
+		<!--skill name="WARRIOR_TACTICAL_ATTACK"   hotkey="MACRO" priority="70" /--><!-- 战术攻击 -->
 		<skill name="WARRIOR_PROBING_ATTACK" 	hotkey="MACRO" priority="80" />
 		<skill name="WARRIOR_OPEN_FLANK"      	hotkey="MACRO" priority="70" />
 		<skill name="WARRIOR_SURPRISE_ATTACK"   hotkey="MACRO" priority="70" pullonly="true" />
@@ -231,9 +231,9 @@
 
 
 	<onLoad><![CDATA[
-		-- Additional Lua code to execute after loading the profile
-		-- and before the bot starts. e.g. You could overwrite profile settings here
-		-- like: changeProfileOption("HP_REST", 60);
+		-- Additional Lua code to execute after loading the profile -- 加载配置文件后、机器人启动前执行的额外 Lua 代码
+		-- and before the bot starts. e.g. You could overwrite profile settings here -- 例如：你可以在这里覆盖配置选项
+		-- like: changeProfileOption("HP_REST", 60); -- 如：changeProfileOption("HP_REST", 60);
 
 		if(player.Class1 == CLASS_SCOUT ) then
 			changeProfileOption("ARROW_QUIVER", 2);
@@ -242,50 +242,50 @@
 	]]></onLoad>
 
 	<onDeath><![CDATA[
-		-- Additional Lua code to execute on death
-		-- pauseOnDeath(); -- Stop the script
-		-- player:logout();	-- logout
+		-- Additional Lua code to execute on death -- 角色死亡时执行的额外 Lua 代码
+		-- pauseOnDeath(); -- Stop the script -- pauseOnDeath(); -- 停止脚本
+		-- player:logout();	-- logout -- player:logout();	-- 登出
 	]]></onDeath>
 
 	<preCodeOnElite><![CDATA[
-		-- code to use before a boss or tough mob
-		-- _arg1 is target pawn, _arg1.Name = target's name
+		-- code to use before a boss or tough mob -- 在 BOSS 或强敌前使用的代码
+		-- _arg1 is target pawn, _arg1.Name = target's name -- _arg1 是目标 pawn，_arg1.Name = 目标名称
 	]]></preCodeOnElite>
 
 	<onLeaveCombat><![CDATA[
-		-- Additional Lua code to execute after killing an enemy
+		-- Additional Lua code to execute after killing an enemy -- 击杀敌人后执行的额外 Lua 代码
 	]]></onLeaveCombat>
 
 	<onLevelup><![CDATA[
-		-- Additional Lua code to execute after having a levelup
-		-- and levelup the skills for a new character (mage or priest recommended)
-		-- e.g. sendMacro("SetSpellPoint(_tabnr, _skillnr);"); would levelup a skill
+		-- Additional Lua code to execute after having a levelup -- 升级后执行的额外 Lua 代码
+		-- and levelup the skills for a new character (mage or priest recommended) -- 并为新角色升级技能（建议法师或牧师）
+		-- e.g. sendMacro("SetSpellPoint(_tabnr, _skillnr);"); would levelup a skill -- 如：sendMacro("SetSpellPoint(_tabnr, _skillnr);"); 会升级一个技能
 	]]></onLevelup>
 
 	<onSkillCast><![CDATA[
-		-- Additional Lua code to execute when casting a skill
-		-- Note: arg1 contains the skill being used.
-		-- i.e. arg1.Name will be the name of the skill being cast
-		-- e.g.:
-		--if( 15 > player.HP/player.MaxHP*100 ) then
-		--    player:cast("PRIEST_SOUL_SOURCE");
-		--elseif( 25 > player.HP/player.MaxHP*100 ) then
-		--    player:cast("PRIEST_HOLY_AURA");
-		--    player:cast("PRIEST_URGENT_HEAL");
-		--    player:cast("PRIEST_URGENT_HEAL");
+		-- Additional Lua code to execute when casting a skill -- 施放技能时执行的额外 Lua 代码
+		-- Note: arg1 contains the skill being used. -- 注意：arg1 包含正在使用的技能。
+		-- i.e. arg1.Name will be the name of the skill being cast -- 即 arg1.Name 将是正在施放的技能名称
+		-- e.g.: -- 例如：
+		--if( 15 > player.HP/player.MaxHP*100 ) then  -- 如果生命值低于 15%
+		--    player:cast("PRIEST_SOUL_SOURCE");  -- 施放灵魂之源
+		--elseif( 25 > player.HP/player.MaxHP*100 ) then  -- 如果生命值低于 25%
+		--    player:cast("PRIEST_HOLY_AURA");  -- 施放神圣光环
+		--    player:cast("PRIEST_URGENT_HEAL");  -- 施放紧急治疗
+		--    player:cast("PRIEST_URGENT_HEAL");  -- 施放紧急治疗
 	]]></onSkillCast>
 
 	<onHarvest><![CDATA[
-		-- Additional Lua code to execute directly before the actual harvesting takes place.
-		-- Note: arg1 contains the object to be harvested.
-		-- i.e. arg1.Name will be the name of the node you are about to harvest
-		-- If this snippet returns 'false', the node will *not* be harvested.
-		-- All other return values result in the player attempting to harvest the node.
-		-- Note that returning 'false' here breaks out of harvesting completely;
-		-- You will not attempt to harvest other nearby nodes instead.
+		-- Additional Lua code to execute directly before the actual harvesting takes place. -- 在实际采集开始前直接执行的额外 Lua 代码。
+		-- Note: arg1 contains the object to be harvested. -- 注意：arg1 包含要采集的对象。
+		-- i.e. arg1.Name will be the name of the node you are about to harvest -- 即 arg1.Name 将是你要采集的节点名称
+		-- If this snippet returns 'false', the node will *not* be harvested. -- 如果此代码片段返回 'false'，则该节点将*不会*被采集。
+		-- All other return values result in the player attempting to harvest the node. -- 所有其他返回值都会使玩家尝试采集该节点。
+		-- Note that returning 'false' here breaks out of harvesting completely; -- 注意，在此处返回 'false' 会完全中断采集；
+		-- You will not attempt to harvest other nearby nodes instead. -- 你不会转而尝试采集附近的其他节点。
 	]]></onHarvest>
 
 	<onUnstickFailure><![CDATA[
-		-- Lua code to execute when MAX_UNSTICK_TRIALS is reached.
+		-- Lua code to execute when MAX_UNSTICK_TRIALS is reached. -- 当达到 MAX_UNSTICK_TRIALS（最大脱困尝试次数）时执行的 Lua 代码。
 	]]></onUnstickFailure>
 </profile>
