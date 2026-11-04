@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<waypoints type="NORMAL">
+	<onLoad>
+		-- ============================================================
+		-- gubao.xml  副本路径 + 开门机制
+		-- 加载配套 gubao_onload.lua（内含打精英怪、拾取卡片、/kcg 拿密码、逐层点选开门）
+		-- ============================================================
+		include("waypoints/"..getFilePath(__WPL.FileName).."/gubao_onload.lua", true)
+	</onLoad>
+
+	<!-- ============================================================
+	     以下坐标均为占位值，请用 createpath.lua 在游戏内重新录制一遍
+	     并把 gubaoKillElite() / gubaoOpenDoor() 放到正确的位置：
+	       - 走到精英怪刷新点         -> gubaoKillElite()
+	       - 走到开门NPC面前          -> gubaoOpenDoor()
+	     ============================================================ -->
+
+	<!-- #1 --><waypoint x="0" z="0"></waypoint>
+	<!-- #2 --><waypoint x="0" z="0"></waypoint>
+	<!-- #3 --><waypoint x="0" z="0"></waypoint>
+
+	<!-- 精英怪刷新点：击杀精英怪并拾取掉落卡片 -->
+	<!-- #4 --><waypoint x="0" z="0">
+		gubaoKillElite();
+	</waypoint>
+
+	<!-- #5 --><waypoint x="0" z="0"></waypoint>
+	<!-- #6 --><waypoint x="0" z="0"></waypoint>
+
+	<!-- 开门NPC面前：/kcg 拿密码并逐层点选开门 -->
+	<!-- #7 --><waypoint x="0" z="0">
+		gubaoOpenDoor();
+	</waypoint>
+
+	<!-- 门开后继续往里走的路径 -->
+	<!-- #8 --><waypoint x="0" z="0"></waypoint>
+</waypoints>
