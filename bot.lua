@@ -147,6 +147,8 @@ function main()
 					hf_language = "russian";
 				elseif(bot.ClientLanguage == "PL" ) then
 					hf_language = "polish";
+				elseif(bot.ClientLanguage == "ZH" or bot.ClientLanguage == "CN" ) then
+					hf_language = "chinese";
 				else
 					hf_language = "english";
 				end

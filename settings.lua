@@ -531,6 +531,8 @@ function settings.load()
 --			settings.options.LANGUAGE = "english";
 --		elseif(hf_language == "FR" ) then
 --			settings.options.LANGUAGE = "french";
+--		elseif(hf_language == "ZH" or hf_language == "CN" ) then
+--			settings.options.LANGUAGE = "chinese";
 --		else
 --			settings.options.LANGUAGE = "english";
 --		end
@@ -912,13 +914,13 @@ function settings.loadProfile(_name)
 
 				-- fix, because getAttribute seems not to recognize the escape characters
 				-- for special ASCII characters
-				name = string.gsub (name, "\\132", string.char(132));	-- ä
-				name = string.gsub (name, "\\142", string.char(142));	-- Ä
-				name = string.gsub (name, "\\148", string.char(148));	-- ö
-				name = string.gsub (name, "\\153", string.char(153));	-- Ö
-				name = string.gsub (name, "\\129", string.char(129));	-- ü
-				name = string.gsub (name, "\\154", string.char(154));	-- Ü
-				name = string.gsub (name, "\\225", string.char(225));	-- ß
+				name = string.gsub (name, "\\132", string.char(132));	-- ï¿½
+				name = string.gsub (name, "\\142", string.char(142));	-- ï¿½
+				name = string.gsub (name, "\\148", string.char(148));	-- ï¿½
+				name = string.gsub (name, "\\153", string.char(153));	-- ï¿½
+				name = string.gsub (name, "\\129", string.char(129));	-- ï¿½
+				name = string.gsub (name, "\\154", string.char(154));	-- ï¿½
+				name = string.gsub (name, "\\225", string.char(225));	-- ï¿½
 
 				table.insert(settings.profile.friends, name);
 			end
@@ -938,13 +940,13 @@ function settings.loadProfile(_name)
 
 				-- fix, because getAttribute seems not to recognize the escape characters
 				-- for special ASCII characters
-				name = string.gsub (name, "\\132", string.char(132));	-- ä
-				name = string.gsub (name, "\\142", string.char(142));	-- Ä
-				name = string.gsub (name, "\\148", string.char(148));	-- ö
-				name = string.gsub (name, "\\153", string.char(153));	-- Ö
-				name = string.gsub (name, "\\129", string.char(129));	-- ü
-				name = string.gsub (name, "\\154", string.char(154));	-- Ü
-				name = string.gsub (name, "\\225", string.char(225));	-- ß
+				name = string.gsub (name, "\\132", string.char(132));	-- ï¿½
+				name = string.gsub (name, "\\142", string.char(142));	-- ï¿½
+				name = string.gsub (name, "\\148", string.char(148));	-- ï¿½
+				name = string.gsub (name, "\\153", string.char(153));	-- ï¿½
+				name = string.gsub (name, "\\129", string.char(129));	-- ï¿½
+				name = string.gsub (name, "\\154", string.char(154));	-- ï¿½
+				name = string.gsub (name, "\\225", string.char(225));	-- ï¿½
 
 				table.insert(settings.profile.mobs, name);
 			end
@@ -1083,6 +1085,8 @@ function settings.loadProfile(_name)
 			hf_language = "russian";
 		elseif(bot.ClientLanguage == "PL" ) then
 			hf_language = "polish";
+		elseif(bot.ClientLanguage == "ZH" or bot.ClientLanguage == "CN" ) then
+			hf_language = "chinese";
 		else
 			hf_language = "english";
 		end
