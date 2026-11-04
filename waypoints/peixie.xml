@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<waypoints type="NORMAL">
+	<onLoad>
+		-- ============================================================
+		-- peixie.xml  第二副本：进门选难度 + 打怪打Boss路线
+		-- 流程：进入副本 -> 走一段路 -> 点击门 -> 选难度
+		--       -> 门消失 -> 正常路线打怪 -> 打 Boss
+		-- 依赖：peixie_onload.lua（内含 peixieOpenDoor / peixieChooseDifficulty / peixieFightBoss）
+		-- ============================================================
+		include("waypoints/"..getFilePath(__WPL.FileName).."/peixie_onload.lua", true)
+	</onLoad>
+
+	<!-- ============================================================
+	     以下坐标均为占位值，请用 createpath.lua 在游戏内重新录制一遍，
+	     并把三个调用放到正确的位置（点击门和难度选择均按 NPC 对话处理）：
+	       - 走到难度选择门面前     -> peixieOpenDoor()    （target_NPC 点门弹框）
+	       - 对话框出现后           -> peixieChooseDifficulty() （ChoiceOption 选难度）
+	       - 走到最终Boss位置       -> peixieFightBoss()
+	     中间打怪路线由 NORMAL 类型路径点自动战斗，无需额外代码。
+	     ============================================================ -->
+
+	<!-- ===== 副本入口到门前 ===== -->
+	<!-- #1 --><waypoint x="0" z="0"></waypoint>
+	<!-- #2 --><waypoint x="0" z="0"></waypoint>
+	<!-- #3 --><waypoint x="0" z="0"></waypoint>
+
+	<!-- 难度选择门面前：点击门，等待对话框出现 -->
+	<!-- #4 --><waypoint x="0" z="0">
+		peixieOpenDoor();
+	</waypoint>
+
+	<!-- 同一位置：选择难度，选完门消失 -->
+	<!-- #5 --><waypoint x="0" z="0">
+		peixieChooseDifficulty();
+	</waypoint>
+
+	<!-- ===== 门消失后的打怪路线 ===== -->
+	<!-- #6 --><waypoint x="0" z="0"></waypoint>
+	<!-- #7 --><waypoint x="0" z="0"></waypoint>
+	<!-- #8 --><waypoint x="0" z="0"></waypoint>
+	<!-- #9 --><waypoint x="0" z="0"></waypoint>
+	<!-- #10 --><waypoint x="0" z="0"></waypoint>
+
+	<!-- 最终 Boss 位置：击杀 Boss -->
+	<!-- #11 --><waypoint x="0" z="0">
+		peixieFightBoss();
+	</waypoint>
+
+	<!-- 打完结束 -->
+	<!-- #12 --><waypoint x="0" z="0"></waypoint>
+</waypoints>
