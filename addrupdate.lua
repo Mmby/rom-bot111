@@ -1,5 +1,6 @@
-local exeName = "Client.exe";
-local exeStartAddress = 0x400000;
+-- Use unified config from settings.lua if available, otherwise fall back to defaults
+local exeName = (settings and settings.options and settings.options.CLIENT_EXE_NAME) or "Client.exe";
+local exeStartAddress = (settings and settings.options and settings.options.CLIENT_EXE_START_ADDRESS) or 0x400000;
 
 print("\201================================ [ NOTICE ] =================================\187");
 print("\186     This script is still in development.                                    \186");

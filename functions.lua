@@ -142,7 +142,7 @@ function selectGame(character)
 	-- Get list of windows in an array
 	local windowList = {}
 	if findProcessByExeList then
-		local processList = findProcessByExeList("Client.exe")
+		local processList = findProcessByExeList(settings.options.CLIENT_EXE_NAME)
 		if( processList == nil or #processList == 0 ) then
 			error("You need to run rom first!", 0);
 			return 0;
@@ -194,7 +194,7 @@ function selectGame(character)
 
 		-- read player address
 		showWarnings(false);
-		local gameroot = getModuleAddress(procId, "Client.exe") + addresses.game_root.base;
+		local gameroot = getModuleAddress(procId, settings.options.CLIENT_EXE_NAME) + addresses.game_root.base;
 		local playerAddress = memoryReadRepeat("uintptr", process, gameroot, addresses.game_root.player.base);
 
 		-- read player name
@@ -2858,7 +2858,7 @@ end
 local _clientExeAddress = nil;
 function getClientExeAddress()
 	if( _clientExeAddress == nil ) then
-		_clientExeAddress = getModuleAddress(getProcId(), "Client.exe");
+		_clientExeAddress = getModuleAddress(getProcId(), settings.options.CLIENT_EXE_NAME);
 	end
 	return _clientExeAddress;
 end
