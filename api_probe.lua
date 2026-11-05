@@ -227,13 +227,19 @@ if type(_G.cli) == "table" then
 end
 
 wsep("XML / 其它库");
-for _, name in ipairs({ "xml", "image", "timer", "memory", "settings", "pair" }) do
+for _, name in ipairs({ "xml", "image", "timer", "memory", "settings", "pair", "filesystem", "fs" }) do
 	exists(name, _G[name]);
 end
 if type(_G.xml) == "table" then
 	w("xml 表全部成员：");
 	for k, v in pairs(_G.xml) do
 		w("  xml." .. tostring(k), type(v));
+	end
+end
+if type(_G.filesystem) == "table" then
+	w("filesystem 表全部成员：");
+	for k, v in pairs(_G.filesystem) do
+		w("  filesystem." .. tostring(k), type(v));
 	end
 end
 
@@ -254,14 +260,23 @@ w("1. openProcess(pid) 的返回结构：待客户端运行时用 addrtest.lua �
 w("2. 2.x 中 createProc 需要管理员权限：详见官方文档");
 w("3. 上述 memory.*Ptr 各函数如 2.x 缺失，兼容层用 memory.readPointer/writePointer 组合实现");
 
+-- 报告输出目录：1.05 有全局 getExecutionPath()；2.x 若缺失则退回当前工作目录
+-- （MicroMacro 启动脚本时会把工作目录切到脚本所在目录）
+local function reportDir()
+	if type(getExecutionPath) == "function" then
+		return getExecutionPath();
+	end
+	return ".";
+end
+
 -- 写报告文件（UTF-8，便于 IDE 查看）
-local outFile = io.open(getExecutionPath() .. "/api_probe_report.txt", "w");
+local outFile = io.open(reportDir() .. "/api_probe_report.txt", "w");
 if outFile then
 	for _, line in ipairs(report) do
 		outFile:write(line, "\n");
 	end
 	outFile:close();
-	print("\n报告已写入: " .. getExecutionPath() .. "/api_probe_report.txt");
+	print("\n报告已写入: " .. reportDir() .. "/api_probe_report.txt");
 else
 	print("\n警告：无法写入报告文件（请确认当前目录可写）。");
 end

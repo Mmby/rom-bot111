@@ -1,0 +1,297 @@
+================================================================	
+== MicroMacro 版本与 Lua 环境	
+================================================================	
+getVersion() = FAIL	api_probe.lua:65: attempt to call a nil value (global 'getVersion')	
+_VERSION = OK	string	Lua 5.4	
+loadstring = OK	nil	
+load = OK	function	
+class = OK	table	
+include = OK	function	
+dofile = OK	function	
+findFile = OK	nil	
+getExecutionPath() = FAIL	api_probe.lua:73: attempt to call a nil value (global 'getExecutionPath')	
+================================================================	
+== 位运算（1.05 为全局函数，2.x 可能为 bit 库 / bit32）	
+================================================================	
+bitAnd = OK	nil	
+bitOr = OK	nil	
+bitXor = OK	nil	
+bitLShift = OK	nil	
+bitRShift = OK	nil	
+bitNot = OK	nil	
+bit.band = OK	nil	
+bit.bor = OK	nil	
+bit32.band = OK	nil	
+================================================================	
+== 内存读写 API（全局函数式，1.05 风格）	
+================================================================	
+memoryReadInt = MISSING	
+memoryReadUInt = MISSING	
+memoryReadFloat = MISSING	
+memoryReadDouble = MISSING	
+memoryReadByte = MISSING	
+memoryReadUByte = MISSING	
+memoryReadString = MISSING	
+memoryReadStringPtr = MISSING	
+memoryReadIntPtr = MISSING	
+memoryReadUIntPtr = MISSING	
+memoryReadBytePtr = MISSING	
+memoryReadRepeat = MISSING	
+memoryWriteInt = MISSING	
+memoryWriteUInt = MISSING	
+memoryWriteFloat = MISSING	
+memoryWriteDouble = MISSING	
+memoryWriteByte = MISSING	
+memoryWriteString = MISSING	
+memoryWriteIntPtr = MISSING	
+memoryWriteFloatPtr = MISSING	
+memoryWriteBytePtr = MISSING	
+memoryRead = MISSING	
+memoryWrite = MISSING	
+================================================================	
+== 内存读写 API（memory 表，2.x 命名空间化风格）	
+================================================================	
+memory 全局对象类型 = nil（非 table，按函数式 API 处理）	
+================================================================	
+== 进程 API	
+================================================================	
+openProcess = MISSING	
+closeProcess = MISSING	
+getModuleAddress = MISSING	
+findProcessByExeList = MISSING	
+findProcessByWindow = MISSING	
+findProcessByName = MISSING	
+getProcessId = MISSING	
+getProcessHandle = MISSING	
+createProc = MISSING	
+getWinProcessList = MISSING	
+process = FOUND	table	
+getCurrentProcess = MISSING	
+getProc = MISSING	
+process 表全部成员：	
+  process.readChunk	function	
+  process.readPtr	function	
+  process.terminate	function	
+  process.close	function	
+  process.findByExe	function	
+  process.is32bit	function	
+  process.getWindows	function	
+  process.attachInput	function	
+  process.write	function	
+  process.readBatch	function	
+  process.getModuleAddress	function	
+  process.getModules	function	
+  process.findPattern	function	
+  process.read	function	
+  process.open	function	
+  process.writePtr	function	
+  process.is64bit	function	
+  process.detachInput	function	
+  process.findByWindow	function	
+  process.getModuleFilename	function	
+================================================================	
+== 窗口 API	
+================================================================	
+findWindow = MISSING	
+findWindowList = MISSING	
+findWindowByTitle = MISSING	
+getWindowsFromProcess = MISSING	
+getWindowClassName = MISSING	
+getWindowParent = MISSING	
+windowRect = MISSING	
+windowValid = MISSING	
+windowList = MISSING	
+foregroundWindow = MISSING	
+getForegroundWindow = MISSING	
+getHwnd = MISSING	
+showWindow = MISSING	
+saveScreenshot = MISSING	
+activateWindow = MISSING	
+getWin = MISSING	
+window = FOUND	table	
+sendMouse = MISSING	
+setWindowTitle = MISSING	
+window 表全部成员：	
+  window.setRect	function	
+  window.getClientRect	function	
+  window.flash	function	
+  window.find	function	
+  window.drawLine	function	
+  window.getRect	function	
+  window.getParent	function	
+  window.findList	function	
+  window.getTitle	function	
+  window.getFocusHwnd	function	
+  window.drawRect	function	
+  window.saveScreenshot	function	
+  window.getClassName	function	
+  window.makeColor	function	
+  window.getAppHwnd	function	
+  window.pixelSearch	function	
+  window.getPixel	function	
+  window.valid	function	
+  window.setClientRect	function	
+  window.setTitle	function	
+  window.show	function	
+sw 常量表（sw.show 等） = MISSING	
+================================================================	
+== 键盘 API	
+================================================================	
+keyboardPress = MISSING	
+keyboardHold = MISSING	
+keyboardRelease = MISSING	
+keyboardBufferClear = MISSING	
+keyboardSetDelay = MISSING	
+keyPressed = MISSING	
+getKeyName = MISSING	
+getStartKey = MISSING	
+getStopKey = MISSING	
+setStartKey = MISSING	
+setStopKey = MISSING	
+keyboard = FOUND	table	
+key = FOUND	table	
+keyboard 表全部成员：	
+  keyboard.virtualType	function	
+  keyboard.virtualPress	function	
+  keyboard.getToggleState	function	
+  keyboard.release	function	
+  keyboard.virtualHold	function	
+  keyboard.setToggleState	function	
+  keyboard.virtualRelease	function	
+  keyboard.getKeyName	function	
+  keyboard.setHookCallback	function	
+  keyboard.hold	function	
+  keyboard.press	function	
+  keyboard.isDown	function	
+  keyboard.released	function	
+  keyboard.pressed	function	
+key 常量表（key.VK_XXX） = FOUND	table	
+  key.VK_HELP	47	
+  key.VK_M	77	
+  key.VK_F3	114	
+  key.VK_RMOUSE	2	
+  key.VK_7	55	
+  key 表成员总数 = 119	
+================================================================	
+== 鼠标 API	
+================================================================	
+mouseClick = MISSING	
+mouseSetPos = MISSING	
+mouseGetPos = MISSING	
+mouseSet = MISSING	
+mouseGet = MISSING	
+mouse = FOUND	table	
+mouse 表全部成员：	
+  mouse.virtualPress	function	
+  mouse.getPosition	function	
+  mouse.virtualWheelMove	function	
+  mouse.setHookCallback	function	
+  mouse.move	function	
+  mouse.released	function	
+  mouse.pressed	function	
+  mouse.setPosition	function	
+  mouse.getConsolePosition	function	
+  mouse.virtualRelease	function	
+  mouse.virtualMove	function	
+  mouse.getVirtualPosition	function	
+  mouse.wheelMove	function	
+  mouse.virtualHold	function	
+  mouse.setVirtualPosition	function	
+  mouse.release	function	
+  mouse.isDown	function	
+  mouse.hold	function	
+  mouse.press	function	
+================================================================	
+== 时间 / 定时器 / 控制流 API	
+================================================================	
+yrest = MISSING	
+rest = MISSING	
+getTime = MISSING	
+deltaTime = MISSING	
+getTimer = MISSING	
+registerTimer = MISSING	
+unregisterTimer = MISSING	
+secondsToTimer = MISSING	
+setPriority = MISSING	
+getPriority = MISSING	
+priority = MISSING	
+================================================================	
+== 日志 / 输出 / 文件工具 API	
+================================================================	
+printf = FOUND	function	
+sprintf = FOUND	function	
+cprintf = MISSING	
+cli = FOUND	table	
+logMessage = MISSING	
+showWarnings = MISSING	
+warning = MISSING	
+getDirectory = MISSING	
+fileExists = MISSING	
+getConsoleAttributes = MISSING	
+setExecutionPath = MISSING	
+getLastWarning = MISSING	
+setUtf8 = MISSING	
+getUtf8 = MISSING	
+cli 颜色表成员：	
+  cli.BLACK	number	
+  cli.LIGHT_MAGENA	number	
+  cli.RED	number	
+  cli.GRAY	number	
+  cli.getColor	function	
+  cli.resetColor	function	
+  cli.LIGHT_CYAN	number	
+  cli.setAttributes	function	
+  cli.LIGHT_BLUE	number	
+  cli.LIGHT_YELLOW	number	
+  cli.MAGENTA	number	
+  cli.LIGHT_RED	number	
+  cli.LIGHT_GREEN	number	
+  cli.BLUE	number	
+  cli.getAttributes	function	
+  cli.GREEN	number	
+  cli.WHITE	number	
+  cli.clear	function	
+  cli.LIGHT_WHITE	number	
+  cli.setColor	function	
+  cli.YELLOW	number	
+  cli.CYAN	number	
+================================================================	
+== XML / 其它库	
+================================================================	
+xml = MISSING	
+image = MISSING	
+timer = MISSING	
+memory = MISSING	
+settings = MISSING	
+pair = MISSING	
+filesystem = FOUND	table	
+fs = MISSING	
+filesystem 表全部成员：	
+  filesystem.fileExists	function	
+  filesystem.createDirectory	function	
+  filesystem.directoryExists	function	
+  filesystem.getDirectory	function	
+  filesystem.isDirectory	function	
+  filesystem.getFilePath	function	
+  filesystem.getOpenFileName	function	
+  filesystem.fixSlashes	function	
+  filesystem.getFileName	function	
+  filesystem.setCWD	function	
+  filesystem.getCWD	function	
+  filesystem.getSaveFileName	function	
+================================================================	
+== 全局限量枚举（名称含关键子串的函数/表）	
+================================================================	
+[GLOBAL]	key	table	
+[GLOBAL]	keyboard	table	
+[GLOBAL]	time	table	
+[GLOBAL]	window	table	
+[GLOBAL]	mouse	table	
+[GLOBAL]	process	table	
+[GLOBAL]	_VERSION	string	
+================================================================	
+== 附加说明（需游戏客户端运行时的探测项）	
+================================================================	
+1. openProcess(pid) 的返回结构：待客户端运行时用 addrtest.lua 探测	proc.pid / proc.handle / proc.baseAddress / proc:getModuleAddress() 等	
+2. 2.x 中 createProc 需要管理员权限：详见官方文档	
+3. 上述 memory.*Ptr 各函数如 2.x 缺失，兼容层用 memory.readPointer/writePointer 组合实现	
