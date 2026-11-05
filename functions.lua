@@ -72,7 +72,9 @@ function memoryReadRepeat(_type, proc, address, offset)
 	local ptr = false;
 	local val;
 
-	if( type(proc) ~= "userdata" ) then
+	-- 64 位迁移：MicroMacro 2.x 中 openProcess 返回 proc 对象（table/userdata），
+	-- 不再限定 userdata，避免误报 Invalid proc。
+	if( proc == nil or (type(proc) ~= "userdata" and type(proc) ~= "table") ) then
 		error("Invalid proc", 2);
 	end
 

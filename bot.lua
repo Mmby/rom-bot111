@@ -1,12 +1,20 @@
 BOT_VERSION = 4.1;
 BOT_REVISION = '<UNKNOWN>';
 ;
-if( type(getVersion) ~= 'function' or (getVersion() / 100) >= 1.06 ) then
-		error("The RoM-Bot scripts are not compatible with your MicroMacro version.\n"
-		.. "Please download and install version 1.05:\n\n"
-		.. "http://solarstrike.net/project/download/44", 0);
+-- 64 位迁移：从 MicroMacro 1.05（32 位）切换到 MicroMacro 2.x（支持 64 位进程）。
+-- 1.05 强制报错已移除；低于 1.9 的 1.x 版本不再支持。
+if( type(getVersion) ~= 'function' ) then
+		error("The RoM-Bot scripts require MicroMacro 2.x (64-bit).\n"
+		.. "Please download and install the latest MicroMacro 2.x build.", 0);
+end
+if( (getVersion() / 100) < 1.06 ) then
+		error("The RoM-Bot scripts no longer support MicroMacro 1.x (32-bit).\n"
+		.. "Please download and install MicroMacro 2.x (64-bit, version 1.9 or above).", 0);
 end
 
+-- 兼容层：在 MicroMacro 2.x 之上恢复 1.05 风格全局 API（含 8 字节指针读取）。
+-- 必须在任何使用 memory* 的模块之前加载。
+include('micromacro_compat.lua');
 include('qword.lua');
 include("addresses.lua");
 include("database.lua");
