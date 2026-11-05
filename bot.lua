@@ -2,14 +2,27 @@ BOT_VERSION = 4.1;
 BOT_REVISION = '<UNKNOWN>';
 ;
 -- 64 位迁移：从 MicroMacro 1.05（32 位）切换到 MicroMacro 2.x（支持 64 位进程）。
--- 1.05 强制报错已移除；低于 1.9 的 1.x 版本不再支持。
-if( type(getVersion) ~= 'function' ) then
-		error("The RoM-Bot scripts require MicroMacro 2.x (64-bit).\n"
-		.. "Please download and install the latest MicroMacro 2.x build.", 0);
-end
-if( (getVersion() / 100) < 1.06 ) then
+-- 2.x 中 getVersion 注册在 macro 表（返回 "MAJOR.MINOR.BUILD" 字符串）；
+-- 1.x 中 getVersion 是全局函数（返回数字）。两种形态都接受，但 2.x 优先。
+local _mmVersion = 0;
+if( type(_G.macro) == "table" and type(_G.macro.getVersion) == "function" ) then
+	local _vs = tostring(_G.macro.getVersion());
+	local _maj, _min = string.match(_vs, "^(%d+)%.(%d+)");
+	_mmVersion = tonumber(_maj or 0) + tonumber(_min or 0) / 100;
+	if( _mmVersion < 1.9 ) then
+		error("The RoM-Bot scripts require MicroMacro 2.x (64-bit, version 1.9 or above).\n"
+		.. "Detected version: " .. _vs, 0);
+	end
+elseif( type(getVersion) == 'function' ) then
+	local _v = getVersion();
+	if( type(_v) == "number" ) then _mmVersion = _v / 100; end
+	if( _mmVersion < 1.06 ) then
 		error("The RoM-Bot scripts no longer support MicroMacro 1.x (32-bit).\n"
 		.. "Please download and install MicroMacro 2.x (64-bit, version 1.9 or above).", 0);
+	end
+else
+	error("The RoM-Bot scripts require MicroMacro 2.x (64-bit).\n"
+	.. "Please download and install the latest MicroMacro 2.x build.", 0);
 end
 
 -- 兼容层：在 MicroMacro 2.x 之上恢复 1.05 风格全局 API（含 8 字节指针读取）。
