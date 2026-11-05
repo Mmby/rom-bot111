@@ -48,6 +48,117 @@ function log_debug(...)
 	logfile:write("\n")
 end
 
+-- 打印内容中文翻译表：保持原有英文输出不变，同时追加中文翻译行
+local zhTranslations = {};
+for k,v in pairs{
+	["State info"] = "状态信息",
+	["Game version:"] = "游戏版本：",
+	["Git revison:"] = "Git 修订版本：",
+	["Player Info"] = "玩家信息",
+	["Address:"] = "地址：",
+	["Level:"] = "等级：",
+	["Name:"] = "名字：",
+	["Position:"] = "坐标：",
+	["Class 1:"] = "职业1：",
+	["Class 2:"] = "职业2：",
+	["HP:"] = "生命值：",
+	["MP:"] = "魔法值：",
+	["MP2:"] = "魔法值2：",
+	["Target:"] = "目标：",
+	["Class Info"] = "职业信息",
+	["Warrior:"] = "战士：",
+	["Scout:"] = "斥候：",
+	["Rogue:"] = "游侠：",
+	["Mage:"] = "法师：",
+	["Priest:"] = "牧师：",
+	["Knight:"] = "骑士：",
+	["Warden:"] = "守望者：",
+	["Druid:"] = "德鲁伊：",
+	["Warlock:"] = "术士：",
+	["Champion:"] = "冠军：",
+	["Player Buffs"] = "玩家增益状态",
+	["Target Buffs"] = "目标增益状态",
+	["Party"] = "队伍",
+	["Craft Levels"] = "生活技能等级",
+	["Blacksmithing:"] = "锻造：",
+	["Carpentry:"] = "木工：",
+	["Armorcrafting:"] = "制甲：",
+	["Tailoring:"] = "裁缝：",
+	["Cooking:"] = "烹饪：",
+	["Alchemy:"] = "炼金：",
+	["Mining:"] = "采矿：",
+	["Woodcutting:"] = "伐木：",
+	["Herbalism:"] = "草药：",
+	["Game/Loading Check"] = "游戏/加载检查",
+	["In-Game:"] = "游戏中：",
+	["Loading:"] = "加载中：",
+	["Casting"] = "施法",
+	["Casting (Pawn):"] = "施法（通用单位）：",
+	["Casting (Player):"] = "施法（玩家）：",
+	["Harvesting:"] = "采集：",
+	["Collecting Type"] = "采集类型：",
+} do zhTranslations[k] = v; end
+
+for k,v in pairs{
+	["Equipment Info"] = "装备信息",
+	["Ammo: "] = "弹药：",
+	["Memdatabase"] = "内存数据库",
+	["Attack skill address:"] = "攻击技能地址：",
+	["Skill ID:"] = "技能ID：",
+	["Skill Name:"] = "技能名：",
+	["Texts"] = "游戏文本",
+	["Inventory"] = "背包",
+	["Item Shop Backpack"] = "商城背包",
+	["Backpack(s)"] = "背包",
+	["Item details"] = "物品详情",
+	["Address"] = "地址",
+	["ID"] = "ID",
+	["Empty"] = "是否为空",
+	["Location"] = "位置",
+	["SlotNumber"] = "槽位号",
+	["BagId"] = "背包ID",
+	["Available"] = "是否可用",
+	["Quality"] = "品质",
+	["Color"] = "颜色",
+	["BoundStatus"] = "绑定状态",
+	["Bound"] = "已绑定",
+	["InUse"] = "使用中",
+	["CoolDownTime"] = "冷却时间",
+	["ItemCount"] = "物品数量",
+	["RequiredLvl"] = "需求等级",
+	["Inventory rent"] = "背包租赁",
+	["Bank"] = "银行",
+	["Bank rent"] = "银行租赁",
+	["Currency"] = "货币",
+	["Currency name"] = "货币名称",
+	["Amount"] = "数量",
+	["Max Amount"] = "最大数量",
+	["Phirus Shells:"] = "菲鲁斯贝壳：",
+	["Energy of Justice:"] = "正义能量：",
+	["Dreamland Pioneer:"] = "梦想先驱者：",
+	["Peak Fragment:"] = "巅峰碎片：",
+	["Stardust:"] = "星尘：",
+	["Ancient Memento:"] = "古老纪念品：",
+	["Proof of Myth:"] = "神话凭证：",
+	["Mirror Shards:"] = "镜之碎片：",
+	["Mirrorworld Tickets:"] = "镜界门票：",
+	["Honor Points:"] = "荣誉点：",
+	["Badges of the ...:"] = "徽章：",
+	["Badge of the ...:"] = "徽章：",
+	["Copper stomping ground:"] = "铜级演武场：",
+	["Silver stomping ground:"] = "银级演武场：",
+	["Object List"] = "对象列表",
+	["Objects found:"] = "发现对象数：",
+	["Cursor Item"] = "光标物品",
+	["Cursor item ID:"] = "光标物品ID：",
+	["Cursor item Bag ID:"] = "光标物品背包ID：",
+	["Mount test"] = "坐骑测试",
+	["Skills"] = "技能",
+	["Code Mods"] = "代码修改",
+	["Check Code In Memory"] = "检查内存中的代码",
+	["Test if installable"] = "测试是否可安装",
+} do zhTranslations[k] = v; end
+
 function printHeader(name, padchar)
 	local width = 79;
 	local padchar = padchar or '=';
@@ -56,11 +167,27 @@ function printHeader(name, padchar)
 	local right = width - #name - left;
 
 	tee(string.rep(padchar, left) .. name .. string.rep(padchar, right));
+
+	-- 中文翻译：在标题下方追加一行相同格式的中文标题
+	local zh = zhTranslations[name];
+	if( zh ) then
+		local zhMidpoint = math.ceil((width + #zh)/2);
+		local zhLeft = width - zhMidpoint;
+		local zhRight = width - #zh - zhLeft;
+		tee(string.rep(padchar, zhLeft) .. zh .. string.rep(padchar, zhRight));
+	end
 end
 
 function printLine(headWidth, header, ...)
+	local rawHeader = tostring(header);
 	header = sprintf("%" .. headWidth .. "s", header)
 	tee(header, ...);
+
+	-- 中文翻译：标签命中翻译表时，追加一行带相同数据的中文输出
+	local zh = zhTranslations[rawHeader];
+	if( zh ) then
+		tee(sprintf("%" .. headWidth .. "s", zh), ...);
+	end
 end
 
 function getClassName(classId)
@@ -69,81 +196,81 @@ function getClassName(classId)
 	end
 
 	if( classId == CLASS_NONE ) then
-		return "none";
+		return "none (无)";
 	elseif( classId == CLASS_GM ) then
-		return "GM";
+		return "GM (管理员)";
 	elseif( classId == CLASS_WARRIOR ) then
-		return "Warrior";
+		return "Warrior (战士)";
 	elseif( classId == CLASS_SCOUT ) then
-		return "Scout"
+		return "Scout (斥候)"
 	elseif( classId == CLASS_ROGUE ) then
-		return "Rogue";
+		return "Rogue (游侠)";
 	elseif( classId == CLASS_MAGE ) then
-		return "Mage";
+		return "Mage (法师)";
 	elseif( classId == CLASS_PRIEST ) then
-		return "Priest"
+		return "Priest (牧师)"
 	elseif( classId == CLASS_KNIGHT ) then
-		return "Knight";
+		return "Knight (骑士)";
 	elseif( classId == CLASS_WARDEN ) then
-		return "Warden";
+		return "Warden (守望者)";
 	elseif( classId == CLASS_DRUID ) then
-		return "Druid";
+		return "Druid (德鲁伊)";
 	elseif( classId == CLASS_WARLOCK ) then
-		return "Warlock";
+		return "Warlock (术士)";
 	elseif( classId == CLASS_CHAMPION ) then
-		return "Champion";
+		return "Champion (冠军)";
 	else
-		return "Unknown class " .. classId;
+		return "Unknown class (未知职业) " .. classId;
 	end
 end
 
 function getEquipSlotName(slotId)
 	if( slotId == 0 ) then
-		return "Head";
+		return "Head (头部)";
 	elseif( slotId == 1 ) then
-		return "Hands";
+		return "Hands (手部)";
 	elseif( slotId == 2 ) then
-		return "Feet";
+		return "Feet (脚部)";
 	elseif( slotId == 3 ) then
-		return "Upper body";
+		return "Upper body (上衣)";
 	elseif( slotId == 4 ) then
-		return "Lower body";
+		return "Lower body (下装)";
 	elseif( slotId == 5 ) then
-		return "Cape";
+		return "Cape (披风)";
 	elseif( slotId == 6 ) then
-		return "Belt";
+		return "Belt (腰带)";
 	elseif( slotId == 7 ) then
-		return "Shoulders";
+		return "Shoulders (肩部)";
 	elseif( slotId == 8 ) then
-		return "Necklace";
+		return "Necklace (项链)";
 	elseif( slotId == 9 ) then
-		return "Ammo";
+		return "Ammo (弹药)";
 	elseif( slotId == 10 ) then
-		return "Ranged weapon";
+		return "Ranged weapon (远程武器)";
 	elseif( slotId == 11 ) then
-		return "Ring 1";
+		return "Ring 1 (戒指1)";
 	elseif( slotId == 12 ) then
-		return "Ring 2";
+		return "Ring 2 (戒指2)";
 	elseif( slotId == 13 ) then
-		return "Earring 1";
+		return "Earring 1 (耳环1)";
 	elseif( slotId == 14 ) then
-		return "earring 2";
+		return "earring 2 (耳环2)";
 	elseif( slotId == 15 ) then
-		return "Main hand";
+		return "Main hand (主手)";
 	elseif( slotId == 16 ) then
-		return "Offhand";
+		return "Offhand (副手)";
 	elseif( slotId == 17 ) then
-		return "Gathering tool";
+		return "Gathering tool (采集工具)";
 	elseif( slotId == 18 ) then
-		return "Amulet 1";
+		return "Amulet 1 (护符1)";
 	elseif( slotId == 19 ) then
-		return "Amulet 2";
+		return "Amulet 2 (护符2)";
 	elseif( slotId == 20 ) then
-		return "Amulet 3";
+		return "Amulet 3 (护符3)";
 	elseif( slotId == 21 ) then
-		return "Back/wings";
+		return "Back/wings (背部/翅膀)";
 	else
-		return "Unknown slot " .. (slotId or 'nil');
+		return "Unknown slot (未知槽位) " .. (slotId or 'nil');
 	end
 end
 
@@ -188,6 +315,7 @@ printHeader("Player Buffs");
 player:updateBuffs()
 if #player.Buffs == 0 then
 	tee("No buffs")
+	tee("无增益状态")
 else
 	for i,v in pairs(player.Buffs) do
 		tee(i, v.Id, v.Name)
@@ -199,6 +327,7 @@ if( player.TargetPtr ~= nil and player.TargetPtr ~= 0 ) then
 	printHeader("Target Buffs");
 	if #player.Buffs == 0 then
 		tee("No buffs")
+		tee("无增益状态")
 	else
 		local target = player:getTarget()
 		target:updateBuffs()
@@ -283,6 +412,7 @@ for i,key in pairs({'AC_INSTRUCTION_01', 'AC_INSTRUCTION_02', 'ZONE955_JOLIN_S1'
 end
 
 tee("\nLoading data for additional testing...");
+tee("正在加载数据以进行附加测试...");
 attach(getWin(player.Name));
 include("/language/english.lua")
 database.load();
@@ -305,6 +435,7 @@ for i = 0,49 do
 end
 if( found == 0 ) then
 	tee("No items were found in this inventory")
+	tee("该背包中没有找到物品")
 end
 
 tee("\n")
@@ -324,6 +455,7 @@ for i = 60,239 do
 end
 if( found == 0 ) then
 	tee("No items were found in this inventory")
+	tee("该背包中没有找到物品")
 end
 
 if( foundItem ) then
@@ -353,6 +485,7 @@ printHeader("Inventory rent", ' ')
 for page = 3,6 do -- Pages 1 & 2 are free; always unlocked
 	local tested = CInventoryItem.isPageAvailable(nil, page)
 	printLine(colWidth, sprintf("Page %d", page), tested)
+	printLine(colWidth, sprintf("第 %d 页", page), tested)
 end
 
 
@@ -368,6 +501,7 @@ for i,v in pairs(bank.BagSlot) do
 end
 if( found == 0 ) then
 	tee("No items were found in the bank")
+	tee("银行中没有找到物品")
 end
 
 tee("")
@@ -375,6 +509,7 @@ printHeader("Bank rent", ' ')
 for page = 2,5 do -- Page 1 is free; always unlocked
 	local tested = CBankItem.isPageAvailable(nil, page)
 	printLine(colWidth, sprintf("Page %d", page), tested)
+	printLine(colWidth, sprintf("第 %d 页", page), tested)
 end
 
 tee("\n")
@@ -407,6 +542,7 @@ olist:update()
 local displayCount = math.min(10, #olist.Objects)
 printLine(colWidth, "Objects found:", #olist.Objects);
 printLine(colWidth, sprintf("Top %d items", displayCount));
+printLine(colWidth, sprintf("前 %d 个项目", displayCount));
 for i = 1, displayCount do
 	v = olist.Objects[i];
 	local lootable = memoryReadRepeat("byte", getProc(), v.Address + addresses.game_root.pawn.lootable_flags) or -1;
@@ -427,6 +563,7 @@ printHeader("Mount test");
 local mount, mountMethod = player:getMount();
 if( mount ~= nil ) then
 	tee("Mounting...");
+	tee("正在骑乘坐骑...");
 	player:mount()
 	local start = os.time();
 	repeat
@@ -435,13 +572,16 @@ if( mount ~= nil ) then
 		if( os.time() - start > 5 ) then
 			player.Casting = false;
 			tee("Took too long.")
+			tee("耗时过长。")
 		end
 	until player.Casting == false
 
 	tee("Dismounting...");
+	tee("正在下马...");
 	player:mount(true)
 else
 	tee("Could not find mount for player; skipping mount test.")
+	tee("未找到玩家的坐骑，跳过坐骑测试。")
 end
 
 tee("");
@@ -476,6 +616,7 @@ end
 
 tee("\n")
 printf(" %-8s %-26s %-6s %-4s %-12s %-10s\n", "ID", "Name", "Level", "As", "Resource", "Hotkey");
+printf(" %-8s %-26s %-6s %-4s %-12s %-10s\n", "ID", "名称", "等级", "副职", "资源", "快捷键");
 for i,v in pairs(settings.profile.skills) do
 	local resource = getResourceName(v)
 	local amount = v[resource] or 0
@@ -498,10 +639,12 @@ for i,v in pairs(addresses.code_mod) do
 
 	if( codemod:checkModified() == false ) then
 		cprintf_ex("%s|green|[+]|white| %s looks good\n", string.rep(" ", 12), i);
+		cprintf_ex("%s|green|[+]|white| %s 状态正常\n", string.rep(" ", 12), i);
 		log_debug(sprintf("%s looks good", i))
 		installableCodemods[i] = codemod;
 	else
 		cprintf_ex("%s|red|[x]|white| %s appears malformed/modified\n", string.rep(" ", 12), i);
+		cprintf_ex("%s|red|[x]|white| %s 异常/已被修改\n", string.rep(" ", 12), i);
 		log_debug(sprintf("%s appears malformed/modified", i))
 	end
 end
@@ -518,9 +661,11 @@ for i,codemod in pairs(installableCodemods) do
 
 	if( success ) then
 		cprintf_ex("%s|green|[+]|white| %s OK!\n", string.rep(" ", 12), i);
+		cprintf_ex("%s|green|[+]|white| %s 测试通过!\n", string.rep(" ", 12), i);
 		log_debug(sprintf("%s OK!", i))
 	else
 		cprintf_ex("%s|red|[x]|white| Failed\n", string.rep(" ", 12), i);
+		cprintf_ex("%s|red|[x]|white| 失败\n", string.rep(" ", 12), i);
 		log_debug(sprintf("%s Failed", i))
 	end
 end

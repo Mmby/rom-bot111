@@ -5,7 +5,8 @@ local exeStartAddress = (settings and settings.options and settings.options.CLIE
 print("\201================================ [ NOTICE ] =================================\187");
 print("\186     This script is still in development.                                    \186");
 print("\186     Use at your own risk                                                    \186");
-print("\200" .. string.rep("=", 77) .. "\188\n\n");
+print("\200" .. string.rep("=", 77) .. "\188");
+print("[ 中文提示 ] 此脚本仍在开发中，请自行承担使用风险。\n");
 
 -- Attempt to read install location from registry
 function getAutoClientPath()
@@ -42,6 +43,7 @@ function getClientHandle()
 
 	if( not exePath or not fileExists(exePath .. exeName) ) then
 		printf("\aPlease select the Runes of Magic %s\n", exeName);
+		printf("请手动选择 Runes of Magic 客户端 %s\n", exeName);
 		rest(1000);
 		fullPath = fixSlashes(getSelectClientPath(), false);
 		exePath = appendSlashesIfNeeded(getFilePath(fullPath));
@@ -50,7 +52,7 @@ function getClientHandle()
 	end
 
 	if( not fileExists(fullPath) ) then
-		error("Could not locate Runes of Magic client");
+		error("Could not locate Runes of Magic client (无法定位 Runes of Magic 客户端)");
 	end
 
 	local handle = io.open(fullPath, 'rb');
@@ -60,15 +62,17 @@ end
 
 handle = getClientHandle();
 if( not handle ) then
-	error("Could not open Runes of Magic client for reading");
+	error("Could not open Runes of Magic client for reading (无法打开 Runes of Magic 客户端进行读取)");
 end
 print("Opened ROM client successfully...");
+print("成功打开 ROM 客户端...");
 
 
 fileContents = handle:read("*a");
 handle:close();
 
 printf("File size: %d bytes\n", #fileContents);
+printf("文件大小：%d 字节\n", #fileContents);
 
 -- Convert an "array" of bytes into a raw string for
 -- pattern matching
@@ -1069,6 +1073,7 @@ local missingUpdates = 0;
 mdbrutePath = getExecutionPath() .. "/bin/";
 if( fileExists(mdbrutePath .. "mdbrute.exe") ) then
 	cprintf_ex("Using |lightblue|MDBrute|white| to find memdatabase base address...\n\n\n");
+	cprintf_ex("正在使用 |lightblue|MDBrute|white| 查找 memdatabase 基址...\n\n\n");
 	local cmd = sprintf('cd "%s" && mdbrute.exe', mdbrutePath);
 	local mdbruteResults = io.popen(cmd):read('*a');
 	local addr = string.match(mdbruteResults, "Found address 0x([0-9a-fA-F]+)");
@@ -1077,13 +1082,18 @@ if( fileExists(mdbrutePath .. "mdbrute.exe") ) then
 		addr = tonumber(addr, 16);
 		foundUpdates['memdatabase_base'] = addr;
 		cprintf_ex("|green|Found |pink|{memdatabase_base}|green| at |yellow|0x%X\n", addr);
+		cprintf_ex("|green|找到 |pink|{memdatabase_base}|green|，位于 |yellow|0x%X\n", addr);
 	else
 		cprintf_ex("|red|Could not locate {memdatabase_base}. Is the game client open and logged in?\n");
+		cprintf_ex("|red|无法定位 {memdatabase_base}。游戏客户端是否已打开并登录？\n");
 	end
 else
 	print("MDBrute not installed; could not scan for memdatabase");
+	print("未安装 MDBrute，无法扫描 memdatabase");
 	printf("If you would like to use this feature, download, extract, and place mdbrute.exe into:\n%s\n\n", mdbrutePath);
+	printf("若想使用该功能，请下载、解压并将 mdbrute.exe 放入：\n%s\n\n", mdbrutePath);
 	print("Download at: https://github.com/SolarStrike-Software/mdbrute/releases\n\n\n");
+	print("下载地址：https://github.com/SolarStrike-Software/mdbrute/releases\n\n\n");
 end
 
 
@@ -1099,12 +1109,14 @@ for i,v in pairs(updatables) do
 				-- If this is supposed to be an offset from client.exe, subtract it.
 				val = val - exeStartAddress;
 				if( val < 0 ) then
-					error(sprintf("\n{%s} has value_raw=true, but final result was negitive; are you sure that's right?", i));
+					error(sprintf("\n{%s} has value_raw=true, but final result was negitive; are you sure that's right? ({%s} 的 value_raw=true，但最终结果为负数，请确认配置是否正确)", i, i));
 				end
 			end
 		end
 
 		cprintf_ex("|green|Found pattern for |pink|{%s}|green| at |yellow|0x%X|green|, new value: |yellow|0x%X\n",
+		i, found + v.value_offset, val);
+		cprintf_ex("|green|找到 |pink|{%s}|green| 的模式，位于 |yellow|0x%X|green|，新值：|yellow|0x%X\n",
 		i, found + v.value_offset, val);
 		foundUpdates[i] = val;
 
@@ -1134,11 +1146,15 @@ for i,v in pairs(updatables) do
 				cprintf_ex("|green|Found |pink|{%s}|green| at |pink|{%s}|yellow| %s|green|, new value: |yellow|0x%X\n",
 					j, i, moddesc, val
 				);
+				cprintf_ex("|green|在 |pink|{%s}|yellow| %s|green| 处找到 |pink|{%s}|green|，新值：|yellow|0x%X\n",
+					i, moddesc, j, val
+				);
 				foundUpdates[j] = val;
 			end
 		end
 	else
 		cprintf(cli.lightred, "Could not find pattern for {%s}\n", i);
+		cprintf(cli.lightred, "无法为 {%s} 找到匹配的模式\n", i);
 		missingUpdates = missingUpdates + 1;
 	end
 end
@@ -1158,6 +1174,7 @@ function save(filename, backup)
 	if( backup ) then
 		local backupFilename = 'backup-' .. filename;
 		printf("Backuping up to %s\n", backupFilename);
+		printf("正在备份至 %s\n", backupFilename);
 
 		local outhandle = io.open(getExecutionPath() .. '/' .. backupFilename, 'w');
 		outhandle:write(addressFile);
@@ -1166,6 +1183,7 @@ function save(filename, backup)
 
 	-- Do replacements as requested
 	printf("Replacing addresses...\n");
+	printf("正在替换地址...\n");
 	for key,value in pairs(foundUpdates) do
 		--local hexValue = sprintf("0x%x", value);
 		local skip = false;
@@ -1180,17 +1198,21 @@ function save(filename, backup)
 
 		if( skip or changed ~= addressFile ) then
 			cprintf_ex("|green|[+]|white| Successfully patched |pink|{%s}\n", key);
+			cprintf_ex("|green|[+]|white| 成功修补 |pink|{%s}\n", key);
 		else
 			if( addressFile:find("%-%-%[%[%s*%{" .. key .. "%}%s*%]%]") ) then
 				cprintf_ex("|yellow|[!]|white| Failed to patch |pink|{%s}|white| or already valid.\n", key);
+				cprintf_ex("|yellow|[!]|white| 修补 |pink|{%s}|white| 失败或已是最新值。\n", key);
 			else
 				cprintf_ex("|lightred|[-]|white| Failed to patch |pink|{%s}|white| (token not found in file)\n", key);
+				cprintf_ex("|lightred|[-]|white| 修补 |pink|{%s}|white| 失败（文件中未找到标记）\n", key);
 			end
 		end
 		addressFile = changed;
 	end
 
 	printf("Writing new addresses to %s\n", filename);
+	printf("正在将新地址写入 %s\n", filename);
 	local newHandle = io.open(getExecutionPath() .. "/" .. filename, 'w');
 	newHandle:write(addressFile);
 end
@@ -1200,6 +1222,7 @@ local continue = true;
 if( missingUpdates > 0 ) then
 	cprintf_ex("\n\n|yellow|Not all updatable addresses could be found.\n"
 		.. "Do you want to continue and update found information? |white|y/n: ");
+	cprintf_ex("|yellow|并非所有可更新的地址都能找到。\n是否继续并更新已找到的信息？ |white|y/n: ");
 	while(true) do
 		local inp = string.lower(string.sub(io.read("*l"), 1, 1));
 		if( #inp == 0 ) then
@@ -1208,6 +1231,7 @@ if( missingUpdates > 0 ) then
 		end
 		if( inp ~= 'y' and inp ~= 'n' ) then
 			printf("Not a valid option. Select (y)es or (n)o: ");
+			printf("无效选项，请选择 (y)es 或 (n)o：");
 		else
 			if( inp == 'y' ) then
 				continue = true;
@@ -1225,8 +1249,10 @@ if( continue ) then
 	save('addresses.lua', true);
 else
 	print("Changed were not committed");
+	print("更改未生效（未提交）");
 end
 
 
 
 printf("Took %0.2f seconds\n", deltaTime(endTime, startTime) / 1000.0);
+printf("本次耗时 %0.2f 秒\n", deltaTime(endTime, startTime) / 1000.0);
