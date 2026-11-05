@@ -1,5 +1,6 @@
 -- A simple script to simply tell you your in-game location
 
+include("micromacro_compat.lua");	-- 64 位迁移兼容层：必须在所有内存 API 模块之前加载
 include("addresses.lua");
 include("functions.lua");
 include("classes/player.lua");

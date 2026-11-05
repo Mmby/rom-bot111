@@ -1,3 +1,5 @@
+include("micromacro_compat.lua");	-- 64 位迁移兼容层：确保鼠标 API 可用
+
 function main()
     local lastx, lasty = 0,0;
     while(true) do
