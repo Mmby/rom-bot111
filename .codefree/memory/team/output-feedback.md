@@ -2,8 +2,8 @@
 name: output-feedback
 type: feedback
 scope: team
-description: 另外 settings.lua 里 `TARGET_FRIEND = {key = _G.key.J, modifier = nil}` —— 注意这里用的是 `_G.key.J` 而不是 `VK_J`！如果 2.x 的 key 表只有 VK_J 没有 J，那么 key.J 是 nil？settin...
+description: settings.lua 中 TARGET_FRIEND 等热键配置使用 _G.key.J 这类裸键名而非 VK_J，已确认 MicroMacro 2.x 的 key 表只有 VK_ 前缀名（无裸名 J，鼠标键为 VK_LMOUSE/RMOUSE/MMOUSE 而非 VK_LBUTTON 系列）。该...
 created: "2026-11-04T07:32:31.799Z"
-updated: "2026-11-06T02:12:13.511Z"
+updated: "2026-11-06T06:35:06.462Z"
 ---
-另外 settings.lua 里 `TARGET_FRIEND = {key = _G.key.J, modifier = nil}` —— 注意这里用的是 `_G.key.J` 而不是 `VK_J`！如果 2.x 的 key 表只有 VK_J 没有 J，那么 key.J 是 nil？settings.lua 是 1.05 时代代码，1.05 的 key 表是不是有 J？这需要看。但这是既有代码，2.x 迁移时设置文件会用默认值。这个点值得在报告中提示：key 表直接数字引用 key.J 需要在迁移时检查。
+settings.lua 中 TARGET_FRIEND 等热键配置使用 _G.key.J 这类裸键名而非 VK_J，已确认 MicroMacro 2.x 的 key 表只有 VK_ 前缀名（无裸名 J，鼠标键为 VK_LMOUSE/RMOUSE/MMOUSE 而非 VK_LBUTTON 系列）。该问题已通过向兼容层 key 表补 A-Z/0-9 裸名别名解决，现有 _G.key.J 写法可用、settings.lua 无需改动；后续新写热键配置应优先使用 VK_ 前缀名。
