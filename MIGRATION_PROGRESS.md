@@ -51,10 +51,11 @@
 
 - 交付 `api_probe.lua`：对所有 2.x 模块（process/window/keyboard/mouse/time/system/cli/key/macro）做存在性与类型盘点，输出 `api_probe_report.txt`。
 - 克隆官方仓库并纳入 `docs/micromacro-2x-src/`（剔除 `.git`/`.DS_Store`），作为离线权威参考。
+- **报告已回传并核对**（2026-11-06）：修正 `api_probe.lua` 的探测缺陷 —— 原 `probe()` 对「读全局值」的探测会把"不存在"误报为 `OK nil`（bit 系列 / loadstring / findFile）；已改为 `exists()` 判定，并补 `macro` / `system` / `log` / `event` 表枚举与全局限量枚举关键字。
 
-### 阶段 1：兼容层与启动链路 ✅（静态完成）
+### 阶段 1：兼容层与启动链路 ✅（静态完成 + 模拟环境验证）
 
-核心交付：`micromacro_compat.lua`（当前 HEAD 版本，约 440 行）。
+核心交付：`micromacro_compat.lua`（当前约 700 行）+ `classes/xml.lua`（纯 Lua XML 兼容库，约 310 行）。
 
 **兼容层覆盖清单**
 
@@ -86,10 +87,18 @@
 | 键盘 | `keyboardBufferClear/SetDelay` | 无对应 | no-op 占位 |
 | 鼠标 | `mouseClick` | 无 `mouse.click` | `press+release` 组合，支持 "right"/"middle" 字符串 |
 | 鼠标 | `mouseSetPos/mouseGetPos/mouseSet` | `mouse.setPosition/getPosition` | 直接映射 |
+| 鼠标 | `mouseLClick/RClick/MClick` | 无对应（player.lua target_NPC/鼠标点击依赖） | `press+release` 组合（VK 1/2/4） |
 | 时间 | `getTime` | `time.getNow` | 直接映射 |
 | 时间 | `deltaTime` | `time.diff`（返回秒） | **×1000 换算毫秒**（1.05 语义） |
 | 睡眠 | `yrest/rest` | `system.rest(ms)` | 直接映射 |
-| 位运算 | `bitAnd/Or/Xor/Not/LShift/RShift` | 无对应 | 纯 Lua 32 位兜底实现 |
+| 热键 | `setStartKey/setStopKey/getStartKey/getStopKey` | 无对应（bot.lua 启动即可调、player 睡眠唤醒依赖） | 存值模拟 + 全局 `startKey/stopKey` 同步 |
+| 优先级 | `setPriority` | `system.setPriority(string)` | 数字（priority.high=2）→ "high"/"low"/"normal" 映射 |
+| 日志 | `logMessage` | `log.add`（带时间戳） | 直接映射，缺失降级 print |
+| 编译 | `loadstring` | Lua 5.4 已移除（settings profile 事件/waypoint Action 全链路依赖） | `loadstring = load` 等价替换 |
+| XML | `xml.open/getElements/getAttribute/getValue/getName` | **2.x 已移除 xml 模块**（settings/profile/waypoint/database XML 全链路依赖） | `classes/xml.lua` 纯 Lua 实现：CDATA/实体/自闭合/嵌套/单双引号属性，compat 自动加载 |
+| 文件 | `getExecutionPath/setExecutionPath/fileExists/getDirectory/getOpenFileName/getSaveFileName/fixSlashes/getFileName/getFilePath/createDirectory/directoryExists/isDirectory` | `filesystem.*` 表 | 12 项全局别名一键导出 |
+| 常量 | `key.J` 等裸键名 | key 表仅 VK_* 名（settings.lua 默认值用 `key.J`） | 为 A-Z/0-9 补裸名别名（不覆盖已有值） |
+| 位运算 | `bitAnd/Or/Xor/Not/LShift/RShift` | 无对应 | 纯 Lua 32 位兜底实现（报告 `OK nil` 系误报，实际缺失） |
 | 常量 | `sw/priority/cli` | 2.x 已有 SW_* / key 表 | 缺失时最小表兜底，cli 颜色名占位 |
 | 版本 | `getVersion()` | `macro.getVersion()`（字符串） | 解析 "MAJOR.MINOR.BUILD" 为数字 |
 
@@ -97,7 +106,11 @@
 - 版本校验优先解析 `_G.macro.getVersion`（2.x 字符串，要求 ≥1.9），1.x 全局数字兜底（≥1.06），避免字符串/数字运算崩溃。
 - `memoryReadRepeat` 放宽 proc 类型校验（`userdata`/`table` 均接受）。
 
-**校验情况**：compat + bot.lua 离线括号结构 + 必需函数存在性校验全部通过；尚未在真实 2.x 运行时验证。
+**校验情况**（2026-11-06 更新）：
+- `luac -p` 语法检查：compat / api_probe / classes/xml.lua 全部通过；
+- **classes/xml.lua 功能验证 35/35**：真实文件（settings.xml 自闭合 hotkey、skills.xml 大量属性、AndorTraining.xml / Default.xml 的 CDATA onLoad 事件）+ 构造样例（标准/数字实体、单双引号属性、嵌套、空元素）；
+- **compat 模拟 2.x 环境加载验证 52/52**：mock process/window/keyboard/mouse/filesystem/time/system/log/key/macro 表后加载，内存/指针/窗口/进程/键盘/鼠标/filesystem 别名/热键/优先级映射/logMessage/loadstring/位运算/key 裸名/xml/常量兜底全部生效；
+- 尚未在真实 2.x 运行时验证（需 Windows），见第 4 节 P0 步骤。
 
 ### 阶段 2：地址重定位 🟡
 
@@ -140,10 +153,11 @@
 
 顺序执行：
 
-1. **[P0] 回传 api_probe_report.txt**：Windows 下用 MicroMacro 2.x 运行 `api_probe.lua`，把生成的报告发回 → 对照核实兼容层对 `key.VK_*` 常量名、`[TODO-API]` 标注的缺失项，做最后一轮静态盘点。此步**不需要游戏客户端**，装了 2.x 即可跑。
-2. **[P0] 64 位客户端地址重扫**：按 `64BIT_ADDRESS_RELOCATION.md` 方法论，A 组优先回填 `addresses.lua`。
-3. **[P1] 核心子系统回归**：在真实环境跑 `addrtest.lua`/`getid.lua` 验证兼容层内存读写正确性，再逐子系统回归。
-4. **[P2] 工具脚本 + 全量回归**。
+1. ✅ **[P0] 回传 api_probe_report.txt 已闭环**（2026-11-06）：报告与官方源码交叉核对完成；由此发现并修复的兼容层缺口全部落地（xml / filesystem 别名 / loadstring / 鼠标三键 / start-stop 热键 / setPriority / logMessage / key 裸名），并修正了 api_probe.lua 的探测缺陷。
+2. **[P0] Windows 实机验证**（需真实 MicroMacro 2.x）：加载 compat 后依次跑 `settings.load()` → `database.load()`（验证纯 Lua XML 解析）→ 启动链路完整性；确认 `[compat]` 启动日志无 WARNING。
+3. **[P0] 64 位客户端地址重扫**：按 `64BIT_ADDRESS_RELOCATION.md` 方法论，A 组优先回填 `addresses.lua`。
+4. **[P1] 核心子系统回归**：在真实环境跑 `addrtest.lua`/`getid.lua` 验证兼容层内存读写正确性，再逐子系统回归。
+5. **[P2] 工具脚本 + 全量回归**。
 
 ---
 
@@ -157,6 +171,11 @@
 - `mouse` 无 `click`，需 `press+release`；按键用 VK 码（VK_LBUTTON=1/RBUTTON=2/MBUTTON=4）。
 - `time.diff` 返回**秒**；1.05 的 `deltaTime` 返回**毫秒**（证据：skill.lua:790 用 `/1000` 换算秒），兼容层已 ×1000。
 - `window.getRect` 返回 `x,y,w,h,showCmd` 五值；`findList`/`process.getWindows` 返回 `{hwnd,name,class}` 表数组（与 1.05 纯 hwnd 数组不同，已包装）。
+- 2.x **无** xml / bit / bit32 / image / settings 模块；XML 全链路由 `classes/xml.lua` 纯 Lua 实现补齐（api_probe 报告证实缺失）。
+- `system.setPriority` 接收**字符串**（"high"/"low"/"normal"），与 1.05 的数字常量不同，compat 做映射。
+- `log.add(msg)` 带时间戳 = 1.05 `logMessage`；`logMessage` 在 bot.lua 启动早期（userfunctions 安装循环）即被调用。
+- 2.x `key` 表仅 VK_* 前缀名（鼠标键为 VK_LMOUSE/RMOUSE/MMOUSE），无裸名如 `key.J`；compat 已补 A-Z/0-9 裸名别名。
+- Lua 5.4 环境无 `loadstring`（报告 `OK nil` 为探测误报，实际缺失）；compat 以 `load` 等价替换。
 
 ### 遗留风险
 
@@ -168,6 +187,9 @@
 | 地址偏移可能整体变化 | 64 位客户端结构体布局与 32 位可能差异较大 | 阶段 2 必须逐项重扫验证，不假设偏移不变 |
 | addrupdate 特征码失配 | 其 `updatables` 全是 32 位 x86 特征码，64 位客户端下全部失效，且特征码绑定编译版本、大更新后会再失效 | 迁移期不依赖它（用 CE 重扫）；若启用自动更新，需先人工提取 64 位特征码并做好「失配即提示手工处理」的降级 |
 | cli 颜色常量 | 2.x 的 cli 是控制台函数表（非颜色名字符串），compat 用占位字符串 | `cprintf` 在 2.x 缺失时已退化为 `printf` |
+| 纯 Lua XML 解析器 | `classes/xml.lua` 覆盖 rom-bot 全部 XML 使用面（CDATA/实体/自闭合），但非标准 XML 功能（DTD/命名空间/XPath）不支持 | 已用 settings/skills/waypoint/profile 真实文件 + 构造样例 35 项验证；实机加载 settings.load() 后再兜底排查 |
+| getExecutionPath 语义 | 2.x 用 `filesystem.getCWD` 近似 1.05 的 MM 执行目录；若以 `rom/` 前缀从 micromacro 目录启动，CWD 可能非项目根 | compat 的 xml/findFile 等路径解析依赖 CWD=项目根的 include 机制；实机验证时先确认启动方式 |
+| 真实 2.x 运行时差异 | 模拟环境 mock 的 API 行为可能与真实 build 有出入（如 read 返回类型、window.getRect 具体顺序） | 待 Windows 实机跑通后逐个核对第 4 节 P0 步骤 2 |
 
 ---
 

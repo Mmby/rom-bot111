@@ -62,26 +62,35 @@ local function exists(name, val)
 end
 
 wsep("MicroMacro 版本与 Lua 环境");
+-- 注意：probe() 只适用于「真正调用函数」的探测；「读全局值」的探测
+-- 必须用 exists()，否则全局不存在时会输出误导性的 "OK nil"。
 probe("getVersion()", function() return getVersion(); end);
 probe("_VERSION", function() return _VERSION; end);
-probe("loadstring", function() return loadstring; end);
-probe("load", function() return load; end);
-probe("class", function() return _G.class; end);
-probe("include", function() return _G.include; end);
-probe("dofile", function() return dofile; end);
-probe("findFile", function() return _G.findFile; end);
+exists("loadstring（Lua 5.4 已移除，改用 load）", _G.loadstring);
+exists("load", _G.load);
+exists("class", _G.class);
+exists("include", _G.include);
+exists("dofile", _G.dofile);
+exists("findFile", _G.findFile);
 probe("getExecutionPath()", function() return getExecutionPath(); end);
+-- macro 表：2.x 的 getVersion/is64bit/is32bit/fireEvent 均注册于此
+exists("macro（宏表）", _G.macro);
+if( type(_G.macro) == "table" ) then
+	w("macro 表全部成员：");
+	for k, v in pairs(_G.macro) do
+		w("  macro." .. tostring(k), type(v));
+	end
+end
 
-wsep("位运算（1.05 为全局函数，2.x 可能为 bit 库 / bit32）");
-probe("bitAnd", function() return _G.bitAnd; end);
-probe("bitOr", function() return _G.bitOr; end);
-probe("bitXor", function() return _G.bitXor; end);
-probe("bitLShift", function() return _G.bitLShift; end);
-probe("bitRShift", function() return _G.bitRShift; end);
-probe("bitNot", function() return _G.bitNot; end);
-probe("bit.band", function() return _G.bit and _G.bit.band; end);
-probe("bit.bor", function() return _G.bit and _G.bit.bor; end);
-probe("bit32.band", function() return _G.bit32 and _G.bit32.band; end);
+wsep("位运算（1.05 为全局函数；2.x 无 bit/bit32 模块，Lua 5.4 也无内置 bit32）");
+exists("bitAnd", _G.bitAnd);
+exists("bitOr", _G.bitOr);
+exists("bitXor", _G.bitXor);
+exists("bitLShift", _G.bitLShift);
+exists("bitRShift", _G.bitRShift);
+exists("bitNot", _G.bitNot);
+exists("bit 库", _G.bit);
+exists("bit32 库", _G.bit32);
 
 wsep("内存读写 API（全局函数式，1.05 风格）");
 local memFunctions = {
@@ -203,7 +212,14 @@ local timeFunctions = {
 for _, name in ipairs(timeFunctions) do
 	exists(name, _G[name]);
 end
-if type(_G.priority) == "table" then
+-- time 表：2.x 的时间 API 命名空间（getNow/deltaTime/diff）
+if( type(_G.time) == "table" ) then
+	w("time 表全部成员：");
+	for k, v in pairs(_G.time) do
+		w("  time." .. tostring(k), type(v));
+	end
+end
+if( type(_G.priority) == "table" ) then
 	w("priority 常量表：");
 	for k, v in pairs(_G.priority) do
 		w("  priority." .. tostring(k), tostring(v));
@@ -226,6 +242,29 @@ if type(_G.cli) == "table" then
 	end
 end
 
+wsep("系统 / 日志 / 事件库（兼容层依赖 system.rest / log.add / event 表）");
+exists("system", _G.system);
+if( type(_G.system) == "table" ) then
+	w("system 表全部成员：");
+	for k, v in pairs(_G.system) do
+		w("  system." .. tostring(k), type(v));
+	end
+end
+exists("log", _G.log);
+if( type(_G.log) == "table" ) then
+	w("log 表全部成员：");
+	for k, v in pairs(_G.log) do
+		w("  log." .. tostring(k), type(v));
+	end
+end
+exists("event", _G.event);
+if( type(_G.event) == "table" ) then
+	w("event 表全部成员：");
+	for k, v in pairs(_G.event) do
+		w("  event." .. tostring(k), type(v));
+	end
+end
+
 wsep("XML / 其它库");
 for _, name in ipairs({ "xml", "image", "timer", "memory", "settings", "pair", "filesystem", "fs" }) do
 	exists(name, _G[name]);
@@ -244,7 +283,7 @@ if type(_G.filesystem) == "table" then
 end
 
 wsep("全局限量枚举（名称含关键子串的函数/表）");
-local keywords = { "memory", "window", "process", "key", "mouse", "yrest", "time", "timer", "prio", "screenshot", "version" };
+local keywords = { "memory", "window", "process", "key", "mouse", "yrest", "time", "timer", "prio", "screenshot", "version", "macro", "system", "log", "event", "xml", "filesystem", "cli" };
 for gname, gval in pairs(_G) do
 	local gn = tostring(gname);
 	for _, kw in ipairs(keywords) do

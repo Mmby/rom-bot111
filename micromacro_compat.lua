@@ -35,6 +35,29 @@ local w = function(...)
 	print("[compat]", table.concat(t, " "));
 end
 
+-- ===================================================================
+-- 0.5 XML 兼容库：2.x 已移除 xml 模块（api_probe 报告证实），而
+--     settings.xml / profiles/*.xml / waypoints/*.xml / database/*.xml
+--     全链路依赖 xml.open()，此处加载纯 Lua 替代实现（classes/xml.lua）。
+--     1.05 下本层已 no-op 返回，不会覆盖 MM 自带 xml。
+-- ===================================================================
+if( type(_G.xml) ~= "table" ) then
+	-- 兼容「以 micromacro 目录为 CWD、用 rom/ 前缀启动」的情况
+	local ok = false;
+	for _, path in ipairs({ "classes/xml.lua", "rom/classes/xml.lua", "../rom/classes/xml.lua" }) do
+		local ok1, err1 = pcall(dofile, path);
+		if( ok1 and type(_G.xml) == "table" ) then
+			ok = true;
+			w("xml compat library loaded (" .. path .. ")");
+			break;
+		end
+		ok = ok1;
+	end
+	if( not ok ) then
+		w("WARNING: xml compat library load failed - settings/database/waypoint XML will not work");
+	end
+end
+
 local proc = _G.process;
 
 -- ===================================================================
@@ -294,6 +317,39 @@ else
 end
 
 -- ===================================================================
+-- 3.7 filesystem 全局别名
+--     1.05 的 getExecutionPath/fileExists/getDirectory/getOpenFileName/
+--     fixSlashes/setExecutionPath 等是全局函数；2.x 全部移入 filesystem 表，
+--     而 bot.lua/functions.lua/settings.lua/database.lua/工具脚本仍以
+--     全局方式调用。此处统一导出（避免逐个调用点改写）。
+-- ===================================================================
+local fs = _G.filesystem;
+if( type(fs) == "table" ) then
+	local fsGlobals = {
+		{ "getExecutionPath",  fs.getCWD },
+		{ "setExecutionPath",  fs.setCWD },
+		{ "fileExists",        fs.fileExists },
+		{ "getDirectory",      fs.getDirectory },
+		{ "directoryExists",   fs.directoryExists },
+		{ "isDirectory",       fs.isDirectory },
+		{ "fixSlashes",        fs.fixSlashes },
+		{ "getOpenFileName",   fs.getOpenFileName },
+		{ "getSaveFileName",   fs.getSaveFileName },
+		{ "getFilePath",       fs.getFilePath },
+		{ "getFileName",       fs.getFileName },
+		{ "createDirectory",   fs.createDirectory },
+	};
+	for _, pair in ipairs(fsGlobals) do
+		local gname, fn = pair[1], pair[2];
+		if( type(_G[gname]) ~= "function" and type(fn) == "function" ) then
+			_G[gname] = fn;
+		end
+	end
+else
+	w("WARNING: filesystem table missing - path/file globals unavailable");
+end
+
+-- ===================================================================
 -- 4. 键盘 / 鼠标（官方 keyboard.* / mouse.* 命名空间）
 --    官方签名：keyboard.press(vk [,async])、hold(vk)、release(vk)、getKeyName(vk)
 --               mouse.press(vk [,async])、mouse.setPosition(x,y)、mouse.getPosition()
@@ -373,6 +429,14 @@ if( type(mse) == "table" ) then
 	if( type(_G.mouseSet) ~= "function" and type(mse.setPosition) == "function" ) then
 		mouseSet = mse.setPosition;
 	end
+	-- 1.05 内置全局 mouseLClick/mouseRClick/mouseMClick（2.x 已移除），
+	-- 补充为 press+release 组合（VK 码：1 左键 / 2 右键 / 4 中键）。
+	-- classes/player.lua target_NPC（3576-3580）与 CPlayer:mouseclick（3621-3626）依赖。
+	if( type(_G.mouseLClick) ~= "function" ) then
+		mouseLClick = function() mse.press(1); mse.release(1); end;
+		mouseRClick = function() mse.press(2); mse.release(2); end;
+		mouseMClick = function() mse.press(4); mse.release(4); end;
+	end
 else
 	-- [TODO-API] mouse 表缺失
 	w("WARNING: mouse table missing");
@@ -399,6 +463,83 @@ if( type(tm) == "table" ) then
 	end
 else
 	w("WARNING: time table missing");
+end
+
+-- ===================================================================
+-- 5.2 开始/停止热键（1.05 全局 setStartKey/setStopKey/getStartKey/getStopKey）
+--     2.x 无对应；模拟存值语义。bot.lua:123 启动即调用，
+--     functions.lua pauseOnDeath、player.lua 睡眠唤起用 getStartKey()
+--     配合 keyPressedLocal() 轮询。
+-- ===================================================================
+_G.startKey = nil;
+_G.stopKey = nil;
+if( type(_G.setStartKey) ~= "function" ) then
+	setStartKey = function(k) _G.startKey = k; end;
+	setStopKey  = function(k) _G.stopKey = k; end;
+	getStartKey = function() return _G.startKey; end;
+	getStopKey  = function() return _G.stopKey; end;
+end
+
+-- ===================================================================
+-- 5.3 进程优先级（bot.lua:120 setPriority(priority.high)）
+--     2.x 的 system.setPriority 接收字符串 "high"/"low"/"normal"，
+--     1.05 传数字（priority.high=2 等，见 7 节 priority 兜底表），此处映射。
+-- ===================================================================
+local sysTab = _G.system;
+if( type(_G.setPriority) ~= "function" ) then
+	if( type(sysTab) == "table" and type(sysTab.setPriority) == "function" ) then
+		local prioToStr = { ["0"] = "normal", ["1"] = "low", ["2"] = "high", ["3"] = "high" };
+		setPriority = function(p)
+			local s = prioToStr[tostring(p)] or "normal";
+			return sysTab.setPriority(s);
+		end;
+	else
+		setPriority = function() end; -- no-op 占位
+	end
+end
+if( type(_G.getPriority) ~= "function" ) then
+	getPriority = function() return nil; end; -- 2.x 无对应，占位
+end
+
+-- ===================================================================
+-- 5.4 logMessage（1.05 写日志文件；2.x 为 log 表的 add，带时间戳）
+--     bot.lua 91/107/188、settings.lua、classes/* 大量依赖。
+-- ===================================================================
+if( type(_G.logMessage) ~= "function" ) then
+	local logTab = _G.log;
+	if( type(logTab) == "table" and type(logTab.add) == "function" ) then
+		logMessage = logTab.add;
+	else
+		logMessage = function(msg) print(tostring(msg)); end; -- 兜底：打印
+	end
+end
+
+-- ===================================================================
+-- 5.5 loadstring（Lua 5.4 已移除 loadstring；rom-bot 的 profile 事件 /
+--     waypoint Action / 队伍代码加载全部依赖，等价替换为 load）
+-- ===================================================================
+if( type(_G.loadstring) ~= "function" and type(_G.load) == "function" ) then
+	loadstring = function(chunk)
+		return load(chunk);
+	end;
+end
+
+-- ===================================================================
+-- 5.6 key 裸键名别名（settings.lua:11 默认值用 _G.key.J 等无 VK_ 前缀形式；
+--     2.x key 表只有 VK_* 名，补齐等价别名，不覆盖已有值）
+-- ===================================================================
+local keyTab = _G.key;
+if( type(keyTab) == "table" ) then
+	local plainNames = {};
+	for i = 0, 9 do plainNames[#plainNames + 1] = tostring(i); end
+	for c = string.byte("A"), string.byte("Z") do
+		plainNames[#plainNames + 1] = string.char(c);
+	end
+	for _, nm in ipairs(plainNames) do
+		if( keyTab[nm] == nil and type(keyTab["VK_" .. nm]) == "number" ) then
+			keyTab[nm] = keyTab["VK_" .. nm];
+		end
+	end
 end
 
 -- 官方 system.rest(ms) 睡眠

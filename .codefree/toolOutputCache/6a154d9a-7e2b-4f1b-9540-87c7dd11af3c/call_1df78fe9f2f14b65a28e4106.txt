@@ -1,0 +1,152 @@
+===== TOOL OUTPUT ITEM 1 =====
+===== findByExe 实现 =====
+int Process_lua::findByExe(lua_State *L)
+{
+    if( lua_gettop(L) != 1 )
+        wrongArgs(L);
+    checkType(L, LT_STRING, 1);
+
+    size_t nameLen = 0;
+    const char *name = lua_tolstring(L, 1, &nameLen);
+
+    DWORD processes[8192];
+    DWORD bytesReturned;
+    int success = EnumProcesses(processes, sizeof(processes), &bytesReturned);
+    if( !success ) {
+        // Throw error
+        int errCode = GetLastError();
+        pushLuaErrorEvent(L, "Failure to enumerate processes. Error code %i (%s)",
+                          errCode, getWindowsErrorString(errCode).c_str());
+        return 0;
+    }
+
+
+    // Get the full path (if necessary)
+    bool comparePaths = false;
+    char *namePtr = (char *)name; // Just be careful to not try to edit the contents of this!
+    char fullPath[MAX_PATH + 1];
+    const char *lookFor[] = {"/", "\\", NULL};
+    if( strcontains(name, lookFor) ) {
+        comparePaths = true;
+        GetFullPathName(name, MAX_PATH, fullPath, &namePtr);
+    }
+    else
+        strlcpy(fullPath, name, MAX_PATH);
+
+    DWORD foundProcId = 0;
+    DWORD proccount = bytesReturned / sizeof(DWORD);
+    for(unsigned int i = 0; i < proccount; i++)
+    {
+        if( processes[i] == 0 ) // Skip invalid entries
+            continue;
+
+        TCHAR szProcName[MAX_PATH] = TEXT("");
+        DWORD access = PROCESS_QUERY_INFORMATION | PROCESS_VM_READ;
+        HANDLE handle = OpenProcess(access, false, processes[i]);
+
+        if( handle == NULL )
+        {
+            int errCode = GetLastError();
+            if( errCode != ERROR_ACCESS_DENIED ) // Skip over processes we cannot access
+            {
+                continue;
+            }
+        }
+
+        // Check process's module names
+        HMODULE hModule;
+        DWORD bytesReturned2;
+        success = EnumProcessModules(handle, &hModule, sizeof(HMODULE), &bytesReturned2);
+===== getModuleAddress 实现 =====
+int Process_lua::getModuleAddress(lua_State *L)
+{
+    if( lua_gettop(L) != 2 )
+        wrongArgs(L);
+    checkType(L, LT_NUMBER, 1);
+    checkType(L, LT_STRING, 2);
+
+    size_t modnameLen;
+    DWORD procId = (DWORD)lua_tointeger(L, 1);
+    const char *modname = lua_tolstring(L, 2, &modnameLen);
+
+    char *modname_lower = 0;
+    try {
+        modname_lower = new char[modnameLen + 1];
+    } catch( std::bad_alloc &ba ) {
+        badAllocation();
+    }
+    sztolower(modname_lower, modname, modnameLen);
+
+    #ifdef _WIN64
+    DWORD cthFlags = TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32;
+    #else
+    DWORD cthFlags = TH32CS_SNAPMODULE;
+    #endif
+
+    HANDLE snapshot = CreateToolhelp32Snapshot(cthFlags, procId);
+    if( snapshot == INVALID_HANDLE_VALUE )
+    {   // Throw error
+        int errCode = GetLastError();
+        pushLuaErrorEvent(L, "Failure to find window. Error code %i (%s)",
+                          errCode, getWindowsErrorString(errCode).c_str());
+    }
+
+    bool found = false;
+    size_t addrFound = 0;
+    MODULEENTRY32 mod;
+    mod.dwSize = sizeof(MODULEENTRY32);
+    if( Module32First(snapshot, &mod) )
+    {
+        char modname_snap[256];
+        sztolower(modname_snap, mod.szModule, sizeof(modname_snap) - 1);
+
+        if( strcmp(modname_snap, modname_lower) == 0 )
+        {
+            found = true;
+            addrFound = (size_t)mod.modBaseAddr;
+        }
+
+        while( !found && Module32Next(snapshot, &mod) )
+        {
+            sztolower(modname_snap, mod.szModule, sizeof(modname_snap) - 1);
+
+            if( strcmp(modname_snap, modname_lower) == 0 )
+            {
+                found = true;
+                addrFound = (size_t)mod.modBaseAddr;
+                break;
+            }
+        }
+    }
+
+    if( !found )
+        return 0;
+    lua_pushinteger(L, addrFound);
+    return 1;
+}
+
+/*  process.getModuleFilename(handle process)
+    Returns (on success):   string filename
+    Returns (on failure):   nil
+
+    Returns the fully-qualified path of a running executable
+*/
+int Process_lua::getModuleFilename(lua_State *L)
+{
+    if( lua_gettop(L) != 1 )
+        wrongArgs(L);
+    checkType(L, LT_USERDATA, 1);
+
+    ProcHandle *pHandle = static_cast<ProcHandle *>(lua_touserdata(L, 1));
+    if( pHandle->handle == 0 )
+        luaL_error(L, szInvalidHandleError);
+
+    char *buffer = 0;
+    try {
+        buffer = new char[MAX_PATH + 1];
+    } catch( std::bad_alloc &ba ) {
+        badAllocation();
+    }
+
+    DWORD retval = GetModuleFileNameEx(pHandle->handle, NULL, buffer, MAX_PATH);
+    if( retval == 0 )
