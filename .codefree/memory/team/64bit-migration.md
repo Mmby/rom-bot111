@@ -2,8 +2,8 @@
 name: 64bit-migration
 type: project
 scope: team
-description: rom-bot 向 64 位客户端迁移、MicroMacro 升级到 2.x（1.9+，C++ 重写版）的活跃重构，方案已确认：完全切换 MicroMacro 2.x（64 位），只支持 64 位客户端，迁移在分支 feature/micromacro-2x-64bit 进行、master 保持不动...
+description: rom-bot 向 64 位客户端迁移、MicroMacro 升级到 2.x（1.9+，C++ 重写版）的活跃重构，方案已确认：完全切换 MicroMacro 2.x，只支持 64 位客户端，迁移在分支 feature/micromacro-2x-64bit 进行、master 保持不动。兼容层缺口...
 created: "2026-11-05T00:32:41.374Z"
-updated: "2026-11-06T01:24:12.407Z"
+updated: "2026-11-06T06:30:39.215Z"
 ---
-rom-bot 向 64 位客户端迁移、MicroMacro 升级到 2.x（1.9+，C++ 重写版）的活跃重构，方案已确认：完全切换 MicroMacro 2.x（64 位），只支持 64 位客户端，迁移在分支 feature/micromacro-2x-64bit 进行、master 保持不动。当前已完成 api_probe.lua 输出的报告与 docs/micromacro-2x-src/ 官方源码注册表的交叉核对，关键结论：报告用 probe() 判定的 "OK nil" 条目（如 loadstring、findFile、bit 相关）全是误报——probe 只读 _G 值而非真实调用，这些对象实际均不存在（Lua 5.4 环境）；exists() 判定的 MISSING/FOUND 可靠。兼容层 micromacro_compat.lua 待补的 P0 缺口：xml 库缺失且项目无 classes/xml.lua 替身（settings/database 依赖 xml.open，需移植纯 Lua XML 解析器，工作量最大）、filesystem 全局别名（getExecutionPath/fileExists 等）未导出、loadstring 需补 =load、mouseLClick/mouseRClick/mouseMClick 未补、setStartKey/setStopKey 等未补；P1 是 settings.lua 的 _G.key.J 应改 VK_J（2.x key 表只有 VK_J 无裸名）。纯 Lua 位运算兜底方向正确，但 defineBitFunction 的"优先使用已有 bit 库"分支永不命中。下一步：修 api_probe.lua（存在性检测改用 exists()，补 macro/system/time 表枚举，全覆盖 key 表），然后补兼容层 P0 缺口，再进入阶段 2 地址重扫验证。
+rom-bot 向 64 位客户端迁移、MicroMacro 升级到 2.x（1.9+，C++ 重写版）的活跃重构，方案已确认：完全切换 MicroMacro 2.x，只支持 64 位客户端，迁移在分支 feature/micromacro-2x-64bit 进行、master 保持不动。兼容层缺口修复已完成并提交到该分支：新增 classes/xml.lua 纯 Lua XML 解析器（compat 自动加载并有加载路径兜底）、filesystem 全局函数别名导出、loadstring→load、鼠标三键组合、热键 set/get 存值模拟、setPriority 数字→字符串映射、logMessage 映射、key 裸键名别名；api_probe.lua 已修复读值探测误报（改为 exists 判定）并补 macro/system/log/event 表与全局限量枚举。离线验证通过：自制 Lua 5.4 解释器跑 xml 功能测试 35/35、compat 模拟 2.x 环境加载测试 52/52。当前状态：等待用户在 Windows 实机验证，验证顺序为在 micromacro.exe 控制台输入 rom-bot111/bot（不带 .lua 后缀）启动全链路，compat 加载、settings.load()、database.load() 都在 attach 连接游戏前执行，先确认无 [compat] 警告，之后再做 64 位地址重扫（CLIENT_EXE_START_ADDRESS 改为 0x140000000）与核心子系统回归。最大遗留风险是纯 Lua XML 解析器尚未实机验证。
